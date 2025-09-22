@@ -4,18 +4,28 @@ import FeaturesAndStatsSection from "../components/FeaturesAndStatsSection";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+// 1. Import the image directly. Vite will handle the correct path.
+import heroBackgroundImage from "/src/assets/landing/bg-image.jpg";
+
 const HeroSection: React.FC = () => {
   return (
     <>
       <Navbar />
       <div
-        className="relative flex min-h-screen w-full items-end bg-cover bg-center  text-white"
-        style={{ backgroundImage: "url('/src/assets/landing/bg-image.jpg')" }}
+        className="relative flex min-h-screen w-full items-end text-white"
+        // 2. Remove the inline style from this div
       >
+        {/* 3. Add the image as an <img> tag */}
+        <img
+          src={heroBackgroundImage}
+          alt="Medical professionals background"
+          className="absolute inset-0 h-full w-full object-cover -z-10"
+        />
+
         {/* Dark overlay for better text contrast */}
         <div className="absolute inset-0 bg-black/60" />
 
-        <main className="relative z-10  max-w-7xl mx-auto px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
+        <main className="relative z-10 max-w-7xl mx-auto px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
           <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-2">
             <div className="flex flex-col items-start gap-y-6 text-left">
               <div className="inline-flex items-center space-x-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium">
@@ -41,12 +51,9 @@ const HeroSection: React.FC = () => {
               </a>
             </div>
 
-            {/* Right Column: Glassmorphism Card - Adjusted for bottom-right alignment */}
+            {/* Right Column: Glassmorphism Card */}
             <div className="flex justify-start lg:justify-end">
-              {" "}
-              {/* Use justify-start on small, justify-end on large screens */}
               <div className="w-full max-w-sm space-y-4 rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
-                {/* Top part of the card */}
                 <div className="flex items-center space-x-4">
                   <div className="flex -space-x-2 overflow-hidden">
                     <img
@@ -72,8 +79,6 @@ const HeroSection: React.FC = () => {
                     </p>
                   </div>
                 </div>
-
-                {/* Bottom part of the card */}
                 <div className="grid grid-cols-3 gap-3 pt-2 text-center">
                   <div className="flex flex-col items-center gap-2 rounded-lg p-2">
                     <p className="text-[10px] font-bold tracking-wider text-white/70">
