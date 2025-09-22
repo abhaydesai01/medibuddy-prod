@@ -93,8 +93,6 @@ const FeaturesAndStatsSection: React.FC = () => {
         <section>
           <div className="relative rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl shadow-blue-500/40 lg:p-12">
             {/* Decorative background elements */}
-            <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-48 h-48 bg-indigo-500/30 rounded-full blur-3xl"></div>
 
             <div className="relative text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
