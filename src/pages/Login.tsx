@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { setCredentials } from "../store/slices/authSlice";
 import { authAPI } from "../services/api";
-import { Heart, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import Logo from "../assets/logo.png";
 
 // Reusable Password Field with Show/Hide Toggle

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
 import Logo from "../assets/logo.png";
-import { Heart, User, Menu, X, ChevronDown } from "lucide-react";
+import { User, Menu, X, ChevronDown } from "lucide-react";
 
 const Navbar: React.FC<{ onMenuClick?: () => void }> = ({ onMenuClick }) => {
   const { user, isAuthenticated } = useSelector(
