@@ -22,7 +22,7 @@ const AIChatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
       id: "1",
       type: "bot",
       content:
-        "Hello! I'm MediBuddy AI, your medical assistant. I can help you with:\n\n• Symptom checking and health analysis\n• Finding nearby hospitals and doctors\n• Medical information and guidance\n• General health advice\n\nWhat can I help you with today?",
+        "Hello! I'm MediiMate AI, your medical assistant. I can help you with:\n\n• Symptom checking and health analysis\n• Finding nearby hospitals and doctors\n• Medical information and guidance\n• General health advice\n\nWhat can I help you with today?",
       timestamp: new Date(),
       intent: "greeting",
     },
@@ -312,7 +312,7 @@ const AIChatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h2 className="font-semibold text-gray-900 text-sm">
-                MediBuddy AI
+                MediiMate AI
               </h2>
               <p className="text-xs text-gray-500">Medical Assistant</p>
             </div>
@@ -360,7 +360,7 @@ const AIChatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
                         : "text-left text-gray-700"
                     }`}
                   >
-                    {message.type === "user" ? "You" : "MediBuddy AI"}
+                    {message.type === "user" ? "You" : "MediiMate AI"}
                   </div>
 
                   {/* Message content */}
@@ -395,7 +395,7 @@ const AIChatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
             <div className="flex justify-start">
               <div className="max-w-[85%]">
                 <div className="text-xs font-medium mb-1 text-gray-700">
-                  MediBuddy AI
+                  MediiMate AI
                 </div>
                 <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                   <div className="flex items-center space-x-2">

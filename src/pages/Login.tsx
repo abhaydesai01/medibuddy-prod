@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { setCredentials } from "../store/slices/authSlice";
 import { authAPI } from "../services/api";
 import { Heart, Eye, EyeOff } from "lucide-react";
+import Logo from "../assets/logo.png";
 
 // Reusable Password Field with Show/Hide Toggle
 const PasswordField = ({
@@ -119,8 +120,8 @@ const Login: React.FC = () => {
 
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold">MediBuddy</span>
+            <img src={Logo} alt="Mediimate company logo" className="h-8 w-8" />
+            <span className="text-2xl font-bold">MediiMate</span>
           </Link>
           <h1 className="mt-12 text-4xl font-bold tracking-tight">
             Welcome Back to Your Health Hub.

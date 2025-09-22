@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Logo from "../assets/logo.png";
 import { Heart, Twitter, Linkedin, Facebook } from "lucide-react";
 
 const Footer: React.FC = () => {
@@ -42,8 +43,12 @@ const Footer: React.FC = () => {
           {/* Logo and Socials Section */}
           <div className="space-y-8">
             <Link to="/" className="flex items-center gap-2">
-              <Heart className="h-8 w-8 text-blue-400" />
-              <span className="text-2xl font-bold text-white">MediBuddy</span>
+              <img
+                src={Logo}
+                alt="Mediimate company logo"
+                className="h-8 w-8"
+              />
+              <span className="text-2xl font-bold text-white">MediiMate</span>
             </Link>
             <p className="text-sm leading-6 text-slate-300">
               Your AI-powered personal medical assistant, simplifying healthcare
@@ -154,7 +159,7 @@ const Footer: React.FC = () => {
         {/* Copyright Section */}
         <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
           <p className="text-sm leading-5 text-slate-400">
-            &copy; {new Date().getFullYear()} MediBuddy. All rights reserved.
+            &copy; {new Date().getFullYear()} MediiMate. All rights reserved.
           </p>
         </div>
       </div>

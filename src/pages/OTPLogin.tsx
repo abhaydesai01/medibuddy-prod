@@ -93,7 +93,7 @@ const LoginWithOtp: React.FC = () => {
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-2">
             <Heart className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold">MediBuddy</span>
+            <span className="text-2xl font-bold">MediiMate</span>
           </Link>
           <h1 className="mt-12 text-4xl font-bold tracking-tight">
             Secure & Seamless Access.

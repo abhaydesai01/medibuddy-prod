@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
+import Logo from "../assets/logo.png";
 import { Heart, User, Menu, X, ChevronDown } from "lucide-react";
 
 const Navbar: React.FC<{ onMenuClick?: () => void }> = ({ onMenuClick }) => {
@@ -50,11 +51,15 @@ const Navbar: React.FC<{ onMenuClick?: () => void }> = ({ onMenuClick }) => {
           </button>
         </div>
 
-        {/* CHANGE: Added MediBuddy Logo for Desktop View */}
+        {/* CHANGE: Added MediiMate Logo for Desktop View */}
         <div className="hidden lg:flex">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-800">MediBuddy</span>
+            <img
+              src={Logo}
+              alt="Mediimate company logo"
+              className="h-10 w-10"
+            />
+            <span className="text-xl font-bold text-gray-800">MediiMate</span>
           </Link>
         </div>
       </div>
@@ -93,8 +98,8 @@ const Navbar: React.FC<{ onMenuClick?: () => void }> = ({ onMenuClick }) => {
             className="flex items-center gap-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <Heart className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold text-white">MediBuddy</span>
+            <img src={Logo} alt="Mediimate company logo" className="h-8 w-8" />
+            <span className="text-2xl font-medium text-white">MediiMate</span>
           </Link>
         </div>
         <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">

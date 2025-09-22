@@ -221,6 +221,7 @@ export const hospitalAPI = {
     api.get(`/hospitals/doctor/${doctorId}`),
 };
 
+// Report API
 export const reportAPI = {
   uploadReport: (formData: FormData) => {
     const userId = getUserId();
@@ -258,6 +259,30 @@ export const reportAPI = {
     const userId = getUserId();
     if (!userId) return Promise.reject(new Error("User not logged in"));
     return api.get(`/reports/${userId}/analytics/dashboard`);
+  },
+};
+
+// --- NEW: Prescription API ---
+export const prescriptionAPI = {
+  getPrescriptions: (params?: any) => {
+    const userId = getUserId();
+    if (!userId) return Promise.reject(new Error("User not logged in"));
+    // The backend route is /prescriptions/:uid, so we pass userId
+    return api.get(`/reports/prescriptions/${userId}`, { params });
+  },
+  uploadPrescription: (formData: FormData) => {
+    const userId = getUserId();
+    if (!userId) return Promise.reject(new Error("User not logged in"));
+    // Assuming an upload endpoint similar to reports for consistency
+    return api.post(`/reports/prescriptions/upload/${userId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  deletePrescription: (id: string) => {
+    const userId = getUserId();
+    if (!userId) return Promise.reject(new Error("User not logged in"));
+    // Assuming a delete endpoint similar to reports
+    return api.delete(`/reports/prescriptions/${userId}/${id}`);
   },
 };
 

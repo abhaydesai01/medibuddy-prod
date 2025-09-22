@@ -26,7 +26,7 @@ const HeroSection: React.FC = () => {
                 Your AI-Powered Prescription Companion
               </h1>
               <p className="text-lg text-white/80">
-                MediBuddy AI ensures you take the right dose, at the right time,
+                MediiMate AI ensures you take the right dose, at the right time,
                 in the right way—personalized to your health needs.
               </p>
               <a

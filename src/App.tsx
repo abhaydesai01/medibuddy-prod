@@ -21,6 +21,7 @@ import TreatmentJourney from "./pages/TreatmentJourney";
 import BookConsultation from "./pages/BookConsultation";
 import LocationTest from "./pages/LocationTest";
 import LoginWithOtp from "./pages/OTPLogin";
+import PrescriptionManager from "./pages/PrescriptionManager";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="treatments" element={<TreatmentSearch />} />
           <Route path="treatment-journey" element={<TreatmentJourney />} />
           <Route path="book-consultation" element={<BookConsultation />} />
+          <Route path="prescriptions" element={<PrescriptionManager />} />
           <Route path="hospitals" element={<HospitalFinder />} />
           <Route path="report-analysis" element={<ReportAnalysis />} />
           <Route path="location-test" element={<LocationTest />} />

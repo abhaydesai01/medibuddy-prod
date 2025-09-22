@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { authAPI } from "../services/api";
-import { Heart, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import Logo from "../assets/logo.png";
 
 const InputField = ({
   id,
@@ -186,9 +187,6 @@ const Register: React.FC = () => {
   };
 
   return (
-    // --- UI Bug Fix: Full Height Layout ---
-    // The parent is set to h-screen and overflow-hidden to prevent scrolling the whole page.
-    // The form panel on the right gets overflow-y-auto to allow scrolling only if content is too long.
     <div className="h-screen bg-white overflow-hidden lg:grid lg:grid-cols-2">
       {/* --- Step 4: Add the Toaster component --- */}
       <Toaster position="top-right" reverseOrder={false} />
@@ -199,8 +197,8 @@ const Register: React.FC = () => {
         <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl opacity-50"></div>
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold">MediBuddy</span>
+            <img src={Logo} alt="Mediimate company logo" className="h-8 w-8" />
+            <span className="text-2xl font-bold">MediiMate</span>
           </Link>
           <h1 className="mt-12 text-4xl font-bold tracking-tight">
             Your Gateway to Better Health.
