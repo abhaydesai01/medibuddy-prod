@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/slices/authSlice";
 // Assuming profileAPI is added to your services/api file
 import { authAPI, profileAPI } from "../services/api";
-import { Heart, User, Mail } from "lucide-react";
+import { Heart } from "lucide-react";
 
 const LoginWithOtp: React.FC = () => {
   // --- State Management for Multi-Step Flow ---
