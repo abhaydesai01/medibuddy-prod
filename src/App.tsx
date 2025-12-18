@@ -19,6 +19,7 @@ import SymptomChecker from "./pages/SymptomChecker";
 import TreatmentSearch from "./pages/TreatmentSearch";
 import HospitalFinder from "./pages/HospitalFinder";
 import ReportAnalysis from "./pages/ReportAnalysis";
+import MealLogs from "./pages/MealLogs";
 import TreatmentJourney from "./pages/TreatmentJourney";
 import BookConsultation from "./pages/BookConsultation";
 import LoginWithOtp from "./pages/OTPLogin";
@@ -108,6 +109,7 @@ function App() {
           <Route path="prescriptions" element={<PrescriptionManager />} />
           <Route path="hospitals" element={<HospitalFinder />} />
           <Route path="report-analysis" element={<ReportAnalysis />} />
+          <Route path="mealLogs" element={<MealLogs />} />
         </Route>
 
         {/* ============================================

@@ -110,8 +110,13 @@ export const authAPI = {
   // --- NEW: OTP Login Endpoints ---
   sendOtp: (phone: string) => api.post("/auth/send-otp", { phone }),
 
+  sendOtpRegister : (phone: string) => api.post("/auth/send-otp-registration", { phone }),
+
   verifyOtp: (phone: string, otp: string) =>
     api.post("/auth/verify-otp", { phone, otp }),
+
+  verifyOtpRegister: (phone: string, otp: string) =>
+    api.post("/auth/verify-otp-registration", { phone, otp }),
 
   checkUserExists: (phone: string) =>
     api.get("/auth/profile", { params: { phone } }),
@@ -299,17 +304,20 @@ export const reportAPI = {
     });
   },
   getReports: (params?: any) => {
-    const { id: userId, phone: userPhone } = getUserDetails();
-    if (!userId) return Promise.reject(new Error("User not logged in"));
+  const phone = localStorage.getItem("patientPhone");
 
-    // Add user_phone to params
-    const requestParams = {
-      ...params,
-      user_phone: userPhone,
-    };
+  if (!phone) {
+    return Promise.reject(new Error("Patient phone not found"));
+  }
 
-    return api.get(`/reports/${userId}`, { params: requestParams });
-  },
+  return api.get(
+    `/reports/phone/${encodeURIComponent(phone)}`,
+    { params }
+  );
+},
+
+
+  
   // getReports: (params?: any) => {
   //   const userId = getUserId();
   //   if (!userId) return Promise.reject(new Error("User not logged in"));
@@ -345,23 +353,20 @@ export const reportAPI = {
 // --- NEW: Prescription API ---
 export const prescriptionAPI = {
   getPrescriptions: (params?: any) => {
-    // 1. Get the user's phone number from localStorage
-    const { phone } = getUserDetails();
+  // Get phone from localStorage / user details
+  const { phone } = getUserDetails();
 
-    // 2. If the phone number isn't found, reject the request
-    if (!phone) {
-      return Promise.reject(new Error("User phone number not found."));
-    }
+  if (!phone) {
+    return Promise.reject(new Error("User phone number not found."));
+  }
 
-    // 3. Combine any existing params with the user_phone
-    const requestParams = {
-      ...params,
-      user_phone: phone, // Add the phone number here
-    };
+  // Phone goes in URL, only pagination/filters in params
+  return api.get(
+    `/reports/prescriptions/${encodeURIComponent(phone)}`,
+    { params }
+  );
+},
 
-    // 4. Make the API call with the phone number in the query parameters
-    return api.get(`/reports/prescriptions/me`, { params: requestParams });
-  },
 
   uploadPrescription: (formData: FormData) => {
     const { id: userId } = getUserDetails(); // Only get the ID for the URL

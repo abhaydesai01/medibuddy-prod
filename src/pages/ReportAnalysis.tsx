@@ -129,24 +129,119 @@ const ReportAnalysis: React.FC = () => {
   const fetchReports = useCallback(async () => {
     setLoading(true);
     setError("");
+
     try {
       const response = await reportAPI.getReports();
-      const reportsData = response.data.reports || response.data || [];
-      const sortedReports = reportsData.sort(
-        (a: Report, b: Report) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      const reportsData = response.data?.reports ?? [];
+
+      const normalizedReports: Report[] = reportsData.map((r: any) => {
+        // 🔥 Normalize TEST RESULTS
+        const normalizedTestResults: TestResult[] = (
+          r.testResults?.length
+            ? r.testResults
+            : r.test_results || []
+        ).map((tr: any) => {
+          // Parse reference range safely
+          let min = "";
+          let max = "";
+          let description = "";
+
+          if (typeof tr.reference_range === "string") {
+            if (tr.reference_range.includes("-")) {
+              [min, max] = tr.reference_range.split("-").map((s: string) => s.trim());
+            } else {
+              description = tr.reference_range;
+            }
+          }
+
+          return {
+            parameter: tr.name || "Unknown",
+            value: tr.value ?? "",
+            unit: tr.unit ?? "",
+            normalRange: {
+              min,
+              max,
+              description,
+            },
+            status: tr.status || "normal",
+            description: "",          // backend doesn’t provide this
+            category: "General",      // backend doesn’t provide categories
+          };
+        });
+
+        return {
+          _id: r._id,
+          title: r.title || r.originalFileName || "Untitled Report",
+          reportType: r.reportType || "Other",
+          processingStatus: r.processingStatus || "uploaded",
+
+          // dates
+          createdAt: r.createdAt || r.created_at,
+          reportDate: r.reportDate || r.report_date,
+
+          // normalized arrays
+          testResults: normalizedTestResults,
+          trends: r.trends || [],
+          tags: r.tags || [],
+
+          aiAnalysis: r.ai_analysis_summary ||
+            r.key_findings ||
+            r.recommendations ||
+            r.follow_up_actions ||
+            r.potential_risk_factors
+            ? {
+              summary: r.ai_analysis_summary || r.summary || "",
+              keyFindings: (r.key_findings || []).map((k: string, i: number) => ({
+                parameter: `Finding ${i + 1}`,
+                value: "",
+                status: "abnormal",
+                description: k,
+              })),
+              recommendations: r.recommendations || [],
+              followUpActions: r.follow_up_actions || [],
+              riskFactors: r.potential_risk_factors || [],
+              overallAssessment:
+                r.ai_analysis_summary
+                  ? "AI-generated assessment available"
+                  : "Assessment pending",
+              urgencyLevel: "medium", // backend doesn't provide this yet
+            }
+            : undefined,
+
+          labName: r.labName,
+
+          fileInfo: {
+            originalName:
+              r.fileInfo?.originalName ||
+              r.originalFileName ||
+              "Unknown file",
+            size: r.fileInfo?.size,
+            mimeType: r.fileInfo?.mimeType,
+            uploadedAt: r.fileInfo?.uploadedAt,
+          },
+        };
+      });
+
+      // ✅ sorting now works
+      normalizedReports.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime()
       );
-      setReports(sortedReports);
+
+      setReports(normalizedReports);
     } catch (error: any) {
       setError(
         error.response?.data?.error ||
-          error.message ||
-          "Failed to fetch reports"
+        error.message ||
+        "Failed to fetch reports"
       );
     } finally {
       setLoading(false);
     }
   }, []);
+
+
 
   useEffect(() => {
     fetchReports();
@@ -367,14 +462,12 @@ const ReportAnalysis: React.FC = () => {
       </div>
 
       <div
-        className={`grid gap-8 transition-all duration-300 ${
-          selectedReport ? "lg:grid-cols-3 xl:grid-cols-4" : "lg:grid-cols-1"
-        }`}
+        className={`grid gap-8 transition-all duration-300 ${selectedReport ? "lg:grid-cols-3 xl:grid-cols-4" : "lg:grid-cols-1"
+          }`}
       >
         <div
-          className={`${
-            selectedReport ? "lg:col-span-1 xl:col-span-1" : "lg:col-span-1"
-          }`}
+          className={`${selectedReport ? "lg:col-span-1 xl:col-span-1" : "lg:col-span-1"
+            }`}
         >
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-full flex flex-col">
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -430,11 +523,10 @@ const ReportAnalysis: React.FC = () => {
                       <div
                         key={report._id}
                         onClick={() => setSelectedReport(report)}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                          selectedReport?._id === report._id
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${selectedReport?._id === report._id
                             ? "bg-blue-50 border-blue-700"
                             : "bg-white border-gray-200 hover:border-blue-400"
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-between items-start">
                           <div>
@@ -529,15 +621,13 @@ const ReportAnalysis: React.FC = () => {
                       </p>
                       <div className="mt-3 flex items-center gap-3 text-sm">
                         <span
-                          className={`px-2 py-1 rounded-md text-xs font-semibold ${
-                            getUrgencyDisplay(
-                              selectedReport.aiAnalysis.urgencyLevel || "low"
-                            ).bg
-                          } ${
-                            getUrgencyDisplay(
+                          className={`px-2 py-1 rounded-md text-xs font-semibold ${getUrgencyDisplay(
+                            selectedReport.aiAnalysis.urgencyLevel || "low"
+                          ).bg
+                            } ${getUrgencyDisplay(
                               selectedReport.aiAnalysis.urgencyLevel || "low"
                             ).color
-                          }`}
+                            }`}
                         >
                           {
                             getUrgencyDisplay(
@@ -669,15 +759,13 @@ const ReportAnalysis: React.FC = () => {
                           </h4>
                           <div className="mt-2 flex items-center gap-2">
                             <span
-                              className={`px-2 py-1 rounded-md text-xs font-semibold ${
-                                getStatusDisplay(
-                                  selectedReport.processingStatus
-                                ).bg
-                              } ${
-                                getStatusDisplay(
+                              className={`px-2 py-1 rounded-md text-xs font-semibold ${getStatusDisplay(
+                                selectedReport.processingStatus
+                              ).bg
+                                } ${getStatusDisplay(
                                   selectedReport.processingStatus
                                 ).color
-                              }`}
+                                }`}
                             >
                               {
                                 getStatusDisplay(
@@ -735,19 +823,19 @@ const ReportAnalysis: React.FC = () => {
                           <span className="text-gray-500">Size:</span>{" "}
                           {selectedReport.fileInfo?.size
                             ? `${(selectedReport.fileInfo.size / 1024).toFixed(
-                                1
-                              )} KB`
+                              1
+                            )} KB`
                             : "N/A"}
                         </div>
                         <div>
                           <span className="text-gray-500">Uploaded:</span>{" "}
                           {selectedReport.fileInfo?.uploadedAt
                             ? new Date(
-                                selectedReport.fileInfo.uploadedAt
-                              ).toLocaleString()
+                              selectedReport.fileInfo.uploadedAt
+                            ).toLocaleString()
                             : new Date(
-                                selectedReport.createdAt
-                              ).toLocaleString()}
+                              selectedReport.createdAt
+                            ).toLocaleString()}
                         </div>
                       </div>
                     </InfoCard>
@@ -769,8 +857,8 @@ const ReportAnalysis: React.FC = () => {
                           <span className="text-gray-500">Report Date:</span>{" "}
                           {selectedReport.reportDate
                             ? new Date(
-                                selectedReport.reportDate
-                              ).toLocaleDateString()
+                              selectedReport.reportDate
+                            ).toLocaleDateString()
                             : "N/A"}
                         </div>
                       </div>
@@ -820,9 +908,8 @@ const ReportAnalysis: React.FC = () => {
                           {category} ({results.length})
                         </h4>
                         <ChevronDown
-                          className={`transition-transform ${
-                            expandedCategories.has(category) ? "rotate-180" : ""
-                          }`}
+                          className={`transition-transform ${expandedCategories.has(category) ? "rotate-180" : ""
+                            }`}
                         />
                       </button>
                       {expandedCategories.has(category) && (
@@ -852,7 +939,7 @@ const ReportAnalysis: React.FC = () => {
                                 </div>
                                 <div className="col-span-full md:col-span-3 text-left md:text-center text-gray-500">
                                   {result.normalRange.min &&
-                                  result.normalRange.max
+                                    result.normalRange.max
                                     ? `${result.normalRange.min} - ${result.normalRange.max}`
                                     : result.normalRange.description || "N/A"}
                                 </div>
@@ -908,11 +995,10 @@ const ReportAnalysis: React.FC = () => {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-colors ${
-                  dragActive
+                className={`p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-colors ${dragActive
                     ? "border-blue-700 bg-blue-50"
                     : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 {!uploadFile ? (
                   <div>

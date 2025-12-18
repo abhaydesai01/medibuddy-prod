@@ -32,19 +32,21 @@ const Login: React.FC = () => {
 
     try {
       // API call to check if user exists
-      const response = await profileAPI.getProfileByIdentifier({
-        phone: fullPhoneNumber,
-      });
+      // const response = await profileAPI.getProfileByIdentifier({
+      //   phone: fullPhoneNumber,
+      // });
+
+
 
       // If user is found (API returns success)
-      if (response.data.user) {
+      // if (response.data.user) {
         toast.loading("Sending OTP to existing user...", {
           id: loadingToastId,
         });
         await authAPI.sendOtp(fullPhoneNumber);
         toast.success("OTP sent successfully!", { id: loadingToastId });
         setStep("otp");
-      }
+      // }
     } catch (error: any) {
       // If user is not found (API returns 404), move to registration
       if (error.response?.status === 404) {
@@ -115,6 +117,7 @@ const Login: React.FC = () => {
           token: response.data.token,
         })
       );
+      localStorage.setItem("patientPhone", fullPhoneNumber);
       toast.success("Login Successful! Redirecting...", { id: loadingToastId });
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (error: any) {

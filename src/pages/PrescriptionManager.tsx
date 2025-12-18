@@ -21,11 +21,12 @@ import {
 interface Medication {
   medicine: string;
   dosage: string;
-  frequency: string;
-  duration: string;
-  instructions?: string | null;
-  timing_display?: string;
+  frequency_per_day: number;
+  duration_days: number;
+  meal_instruction?: string;
+  timings?: string[];
 }
+
 
 interface Prescription {
   _id: string;
@@ -89,8 +90,8 @@ const PrescriptionManager: React.FC = () => {
     } catch (err: any) {
       setError(
         err.response?.data?.error ||
-          err.message ||
-          "Failed to fetch prescriptions"
+        err.message ||
+        "Failed to fetch prescriptions"
       );
     } finally {
       setLoading(false);
@@ -258,18 +259,16 @@ const PrescriptionManager: React.FC = () => {
       </div>
 
       <div
-        className={`grid gap-8 transition-all duration-300 ${
-          selectedPrescription
+        className={`grid gap-8 transition-all duration-300 ${selectedPrescription
             ? "lg:grid-cols-3 xl:grid-cols-4"
             : "lg:grid-cols-1"
-        }`}
+          }`}
       >
         <div
-          className={`${
-            selectedPrescription
+          className={`${selectedPrescription
               ? "lg:col-span-1 xl:col-span-1"
               : "lg:col-span-1"
-          }`}
+            }`}
         >
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-full flex flex-col">
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -320,11 +319,10 @@ const PrescriptionManager: React.FC = () => {
                       <div
                         key={p._id}
                         onClick={() => setSelectedPrescription(p)}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                          selectedPrescription?._id === p._id
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${selectedPrescription?._id === p._id
                             ? "bg-blue-50 border-blue-700"
                             : "bg-white border-gray-200 hover:border-blue-400"
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-between items-start">
                           <div>
@@ -435,11 +433,28 @@ const PrescriptionManager: React.FC = () => {
                           {med.dosage}
                         </div>
                         <div className="col-span-full md:col-span-2 text-gray-600">
-                          {med.frequency}
+                          {med.frequency_per_day}× daily
                         </div>
-                        <div className="col-span-full md:col-span-4 text-gray-600">
-                          {med.instructions || med.timing_display || "N/A"}
+
+                        <div className="col-span-full md:col-span-4 text-gray-600 space-y-1">
+                          <div>
+                            <span className="font-medium">Duration:</span>{" "}
+                            {med.duration_days} days
+                          </div>
+
+                          <div>
+                            <span className="font-medium">When:</span>{" "}
+                            {med.meal_instruction || "—"}
+                          </div>
+
+                          {med.timings && med.timings.length > 0 && (
+                            <div>
+                              <span className="font-medium">Timings:</span>{" "}
+                              {med.timings.join(", ")}
+                            </div>
+                          )}
                         </div>
+
                       </div>
                     ))}
                   </div>
@@ -474,11 +489,10 @@ const PrescriptionManager: React.FC = () => {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-colors ${
-                  dragActive
+                className={`p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-colors ${dragActive
                     ? "border-blue-700 bg-blue-50"
                     : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 {!uploadFile ? (
                   <div>
@@ -604,52 +618,52 @@ const ConfirmationModal: React.FC<{
   confirmText,
   isConfirming,
 }) => {
-  if (!isOpen) return null;
+    if (!isOpen) return null;
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      onClick={onClose}
-    >
+    return (
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        onClick={onClose}
       >
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 bg-red-100 p-3 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-              <p className="text-sm text-gray-500 mt-2">{message}</p>
+        <div
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 bg-red-100 p-3 rounded-full">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+                <p className="text-sm text-gray-500 mt-2">{message}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="p-4 border-t flex justify-end gap-4 bg-gray-50 rounded-b-2xl">
-          <button
-            onClick={onClose}
-            className="h-10 px-5 bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isConfirming}
-            className="h-10 px-5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center justify-center gap-2 disabled:bg-gray-400"
-          >
-            {isConfirming ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" /> Deleting...
-              </>
-            ) : (
-              confirmText
-            )}
-          </button>
+          <div className="p-4 border-t flex justify-end gap-4 bg-gray-50 rounded-b-2xl">
+            <button
+              onClick={onClose}
+              className="h-10 px-5 bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={isConfirming}
+              className="h-10 px-5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center justify-center gap-2 disabled:bg-gray-400"
+            >
+              {isConfirming ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" /> Deleting...
+                </>
+              ) : (
+                confirmText
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default PrescriptionManager;

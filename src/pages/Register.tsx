@@ -2,178 +2,72 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { authAPI } from "../services/api";
-import { Eye, EyeOff, Heart } from "lucide-react";
 import Logo from "../assets/logo.png";
-
-const InputField = ({
-  id,
-  label,
-  type = "text",
-  value,
-  onChange,
-  name,
-  required = false,
-  placeholder = "",
-}: {
-  id: string;
-  label: string;
-  type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  name: string;
-  required?: boolean;
-  placeholder?: string;
-}) => {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        {label}
-      </label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        required={required}
-        placeholder={placeholder}
-        className="w-full h-11 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm"
-      />
-    </div>
-  );
-};
-
-const PasswordField = ({
-  id,
-  label,
-  value,
-  onChange,
-  name,
-  required = false,
-  placeholder = "",
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  name: string;
-  required?: boolean;
-  placeholder?: string;
-}) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          id={id}
-          name={name}
-          type={isPasswordVisible ? "text" : "password"}
-          value={value}
-          onChange={onChange}
-          required={required}
-          placeholder={placeholder}
-          className="w-full h-11 px-4 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm"
-        />
-        <button
-          type="button"
-          onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-          className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-gray-700"
-          aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-        >
-          {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
-        </button>
-      </div>
-    </div>
-  );
-};
+import { Heart } from "lucide-react";
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    password: "",
-    confirmPassword: "",
-    age: "",
-    gender: "",
-    address: "",
+    mpin: "",
   });
+
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // ----------------------------
+  // HANDLE CHANGE
+  // ----------------------------
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
+
+    // Force MPIN to be only digits
+    if (name === "mpin") {
+      if (!/^\d{0,4}$/.test(value)) return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // ----------------------------
+  // SEND OTP
+  // ----------------------------
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const {
-      name,
-      email,
-      phone,
-      password,
-      confirmPassword,
-      age,
-      gender,
-      address,
-    } = formData;
 
-    if (!name || !email || !password || !confirmPassword || !phone) {
-      toast.error("Please fill in all required fields.");
+    const { name, email, phone, mpin } = formData;
+
+    if (!name || !email || !phone || !mpin) {
+      toast.error("Please fill in all fields.");
       return;
     }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+
+    if (mpin.length !== 4) {
+      toast.error("MPIN must be exactly 4 digits.");
       return;
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long.");
-      return;
-    }
+
+    const formattedPhone = phone.startsWith("+91")
+      ? phone
+      : `+91${phone}`;
 
     setLoading(true);
-    const loadingToastId = toast.loading("Creating your account...");
+    const loadingToastId = toast.loading("Sending OTP...");
 
     try {
-      const dataToSubmit: any = {
-        name,
-        email,
-        password,
-        phone: `+91${phone}`,
-      };
-      if (age) dataToSubmit.age = parseInt(age, 10);
-      if (gender) dataToSubmit.gender = gender;
-      if (address) {
-        dataToSubmit.location = {
-          type: "Point",
-          coordinates: [0, 0],
-          address,
-        };
-      }
+      await authAPI.sendOtpRegister(formattedPhone);
 
-      await authAPI.register(dataToSubmit);
+      toast.success("OTP sent!", { id: loadingToastId });
+      setOtpSent(true);
 
-      toast.success("Registration successful! Redirecting...", {
-        id: loadingToastId,
-      });
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Registration failed.", {
+      toast.error(err.response?.data?.message || "Failed to send OTP.", {
         id: loadingToastId,
       });
     } finally {
@@ -181,189 +75,217 @@ const Register: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-white lg:grid lg:grid-cols-2">
-      <Toaster position="top-right" reverseOrder={false} />
+  // ----------------------------
+  // VERIFY OTP & REGISTER
+  // ----------------------------
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      {/* Left Panel - Fixed */}
-      <div className="relative hidden w-full flex-col justify-between bg-gradient-to-br from-slate-900 to-blue-900 p-8 text-white lg:flex lg:sticky lg:top-0 lg:h-screen">
-        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl opacity-50"></div>
+    const { name, email, phone, mpin } = formData;
+    const formattedPhone = phone.startsWith("+91")
+      ? phone
+      : `+91${phone}`;
+
+    if (!otp) {
+      toast.error("Enter the OTP");
+      return;
+    }
+
+    if (mpin.length !== 4) {
+      toast.error("MPIN must be exactly 4 digits.");
+      return;
+    }
+
+    setLoading(true);
+    const loadingToastId = toast.loading("Verifying OTP...");
+
+    try {
+      // Verify OTP
+      await authAPI.verifyOtpRegister(formattedPhone, otp);
+
+      // Register patient
+      await authAPI.register({
+        name,
+        email,
+        phone: formattedPhone,
+        mpin,
+      });
+
+      toast.success("Registration successful!", {
+        id: loadingToastId,
+      });
+
+      navigate("/login");
+
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Invalid OTP", {
+        id: loadingToastId,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <div className="h-screen bg-white overflow-hidden lg:grid lg:grid-cols-2">
+      <Toaster position="top-right" />
+
+      {/* LEFT PANEL */}
+      <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-slate-900 to-blue-900 p-8 text-white relative">
         <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={Logo} alt="Mediimate company logo" className="h-8 w-8" />
-            <span className="text-2xl font-bold">MediiMate</span>
-          </Link>
-          <div className="mt-12 flex items-center gap-3">
-            <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
-              <Heart className="h-8 w-8" />
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight">
-              Your Gateway to Better Health
-            </h1>
+          <div className="flex items-center gap-2">
+            <img src={Logo} className="h-8 w-8" />
+            <span className="text-2xl font-bold">MediiMate • Patients</span>
           </div>
+
+          <h1 className="mt-12 text-4xl font-bold tracking-tight">
+            Create Your Patient Account
+          </h1>
+
           <p className="mt-4 text-lg text-blue-200">
-            Ready to embark on your wellness journey? Create an account to get
-            started.
+            Sign up securely with OTP & MPIN authentication.
           </p>
-        </div>
-        <div className="relative z-10 mt-auto">
-          <div className="rounded-xl bg-black/20 p-6 backdrop-blur-sm">
-            <blockquote className="text-sm leading-relaxed">
-              "This platform is a game-changer. Managing my prescriptions has
-              never been easier."
-            </blockquote>
-            <footer className="mt-4 flex items-center gap-4">
-              <img
-                className="h-12 w-12 rounded-full object-cover"
-                src="https://i.pravatar.cc/150?img=5"
-                alt="Sarah L."
-              />
-              <div>
-                <p className="font-semibold text-white">Sarah L.</p>
-                <p className="text-sm text-blue-200">Verified User</p>
-              </div>
-            </footer>
-          </div>
         </div>
       </div>
 
-      {/* Right Form Panel - Scrollable */}
-      <div className="flex w-full flex-col py-8 px-4 sm:px-6 lg:px-8 overflow-y-auto">
-        <div className="mx-auto w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-6">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <img
-                src={Logo}
-                alt="Mediimate company logo"
-                className="h-8 w-8"
-              />
-              <span className="text-2xl font-bold text-gray-900">
-                MediiMate
-              </span>
+      {/* RIGHT PANEL */}
+      <div className="flex w-full h-full flex-col justify-center p-8 overflow-y-auto">
+        <div className="mx-auto w-full max-w-sm">
+
+          <h2 className="text-3xl font-bold text-gray-900">
+            Patient Registration
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-600">
+            Already a member?{" "}
+            <Link to="/login" className="font-medium text-blue-600">
+              Login here
             </Link>
-          </div>
+          </p>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Create Your Account
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-gray-600">
-              Ready to embark on your wellness journey? Sign up now!
-            </p>
-          </div>
+          {/* FORM */}
+          <form
+            className="mt-8 space-y-6"
+            onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}
+          >
+            {/* NAME */}
+            {!otpSent && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Full Name
+                  </label>
+                  <input
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full h-12 px-4 border rounded-lg"
+                  />
+                </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-            <InputField
-              id="name"
-              name="name"
-              label="Full Name *"
-              placeholder="Enter your full name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-            <InputField
-              id="email"
-              name="email"
-              type="email"
-              label="Email *"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
+                {/* EMAIL */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full h-12 px-4 border rounded-lg"
+                  />
+                </div>
 
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Phone Number *
-              </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                  +91
-                </span>
+                {/* PHONE */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Phone Number
+                  </label>
+                  <div className="flex">
+                    <span className="px-3 flex items-center border rounded-l-lg bg-gray-50">
+                      +91
+                    </span>
+                    <input
+                      name="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full h-12 px-4 border rounded-r-lg"
+                      placeholder="98XXXXXXXX"
+                    />
+                  </div>
+                </div>
+
+                {/* MPIN */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Create MPIN (4-digit)
+                  </label>
+                  <input
+                    name="mpin"
+                    type="password"
+                    maxLength={4}
+                    required
+                    value={formData.mpin}
+                    onChange={handleInputChange}
+                    className="w-full h-12 px-4 text-center tracking-[0.4em] border rounded-lg"
+                    placeholder="••••"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* OTP INPUT */}
+            {otpSent && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Enter OTP
+                </label>
                 <input
-                  type="tel"
-                  name="phone"
-                  id="phone"
-                  className="w-full h-11 px-4 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm"
-                  placeholder="98XXXXXXXX"
-                  value={formData.phone}
-                  onChange={handleInputChange}
+                  type="text"
+                  maxLength={6}
                   required
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full h-12 px-4 text-center tracking-[0.6em] border rounded-lg"
+                  placeholder="••••••"
                 />
               </div>
-            </div>
+            )}
 
-            <PasswordField
-              id="password"
-              name="password"
-              label="Password *"
-              placeholder="Enter a secure password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
-            <PasswordField
-              id="confirmPassword"
-              name="confirmPassword"
-              label="Confirm Password *"
-              placeholder="Re-enter your password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-            />
+            {/* BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 bg-blue-600 text-white rounded-lg font-semibold"
+            >
+              {loading
+                ? "Please wait..."
+                : otpSent
+                ? "Verify OTP & Register"
+                : "Send OTP"}
+            </button>
 
-            <p className="text-xs text-gray-500 text-center py-2">
-              By creating an account, you agree to our{" "}
-              <a href="#" className="underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="underline">
-                Privacy Policy
-              </a>
-              .
-            </p>
+            {/* Change phone */}
+            {otpSent && (
+              <div className="text-center text-sm">
+                <button
+                  type="button"
+                  onClick={() => setOtpSent(false)}
+                  className="text-blue-600"
+                >
+                  Use a different number
+                </button>
+              </div>
+            )}
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 flex items-center justify-center"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  "Create Account & Continue"
-                )}
-              </button>
-            </div>
-
-            <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="flex-shrink mx-4 text-gray-400">Or</span>
-              <div className="flex-grow border-t border-gray-300"></div>
-            </div>
-
-            <p className="text-center text-sm text-gray-600 pt-2">
-              Already a member?{" "}
-              <Link
-                to="/login"
-                className="font-medium text-blue-600 hover:underline"
-              >
-                Sign in
-              </Link>
-            </p>
           </form>
         </div>
-
-        {/* Extra padding at bottom for mobile */}
-        <div className="h-8"></div>
       </div>
     </div>
   );

@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  ClipboardPlus, // 1. Import a suitable icon
+  ClipboardPlus,
+  Utensils // 1. Import a suitable icon
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
@@ -32,7 +33,12 @@ const Sidebar: React.FC = () => {
       label: "Symptom Checker",
     },
     { to: "/treatments", icon: <Stethoscope size={20} />, label: "Treatments" },
-    { to: "/hospitals", icon: <Building size={20} />, label: "Hospitals" },
+    // { to: "/hospitals", icon: <Building size={20} />, label: "Hospitals" },
+    {
+      to: "/mealLogs",
+      icon: <Utensils size={20} />, // 2. Use the imported icon here
+      label: "Meal Logs",
+    },
     {
       to: "/report-analysis",
       icon: <FileText size={20} />,

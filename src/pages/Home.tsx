@@ -4,6 +4,7 @@ import FeaturesAndStatsSection from "../components/FeaturesAndStatsSection";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+
 // 1. Import the image directly. Vite will handle the correct path.
 import heroBackgroundImage from "/src/assets/landing/bg-image.jpg";
 
@@ -40,7 +41,7 @@ const HeroSection: React.FC = () => {
                 in the right way—personalized to your health needs.
               </p>
               <a
-                href="#"
+                href="/login"
                 className="group mt-4 inline-flex items-center justify-center space-x-2 rounded-lg bg-white px-6 py-3.5 text-base font-semibold text-gray-800 shadow-lg transition hover:bg-gray-200"
               >
                 <span>Get Started for Free</span>
