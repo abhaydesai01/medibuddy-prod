@@ -93,7 +93,7 @@ export const authAPI = {
   register: (userData: {
     name: string;
     email: string;
-    password: string;
+    password?: string;
     phone: string;
     age?: number;
     gender?: string;
@@ -102,6 +102,7 @@ export const authAPI = {
       coordinates: [number, number];
       address: string;
     };
+    mpin?: string;
   }) => api.post("/auth/register", userData),
 
   login: (credentials: { email: string; password: string }) =>

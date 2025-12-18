@@ -103,7 +103,7 @@ const [logsLoading, setLogsLoading] = useState(false);
     // ---------------------------
     const grouped: Record<string, any[]> = {};
 
-    vital.forEach((log) => {
+    vital.forEach((log : any) => {
       const date = log.date;
       if (!grouped[date]) grouped[date] = [];
       grouped[date].push(log);
@@ -129,8 +129,8 @@ const [logsLoading, setLogsLoading] = useState(false);
 const calorieMap: Record<string, number> = {};
 
 vital
-  .filter((v) => v.type === "food" && v.calories_consumed != null)
-  .forEach((v) => {
+  .filter((v : any) => v.type === "food" && v.calories_consumed != null)
+  .forEach((v : any) => {
     const date = v.created_at.split("T")[0];
     calorieMap[date] = (calorieMap[date] || 0) + v.calories_consumed;
   });
@@ -144,24 +144,24 @@ const calorieData = Object.entries(calorieMap)
     // BLOOD PRESSURE TREND
     // ---------------------------
     const bpData: any[] = vital
-      .filter((v) => v.type === "bp")
-      .map((v) => ({
+      .filter((v : any) => v.type === "bp")
+      .map((v : any) => ({
         date: v.created_at.split("T")[0],
         systolic: v.systolic,
         diastolic: v.diastolic,
       }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .sort((a : any, b : any) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     // ---------------------------
     // WEIGHT TREND
     // ---------------------------
     const weightData: any[] = vital
-      .filter((v) => v.type === "weight")
-      .map((v) => ({
+      .filter((v : any) => v.type === "weight")
+      .map((v : any) => ({
         date: v.created_at.split("T")[0],
         weight: parseFloat(v.value),
       }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .sort((a : any, b : any) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     // ---------------------------
     // SET LOGS (FINAL OBJECT)
