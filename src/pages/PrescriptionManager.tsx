@@ -402,13 +402,6 @@ const PrescriptionManager: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
-                <p className="text-sm text-blue-700 whitespace-pre-wrap">
-                  {selectedPrescription.summary || "No summary available."}
-                </p>
-              </div>
-
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">
                   Medications
@@ -459,6 +452,13 @@ const PrescriptionManager: React.FC = () => {
                     ))}
                   </div>
                 </div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
+                <p className="text-sm text-blue-700 whitespace-pre-wrap">
+                  {selectedPrescription.summary || "No summary available."}
+                </p>
               </div>
             </div>
           </div>

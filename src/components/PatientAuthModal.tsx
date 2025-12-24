@@ -1,26 +1,39 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Lock, Mail } from "lucide-react";
+import { X, Lock, User, Phone } from "lucide-react";
+
+interface PatientOption {
+  _id: string;
+  name: string;
+  phone: string;
+  age?: number;
+  bloodGroup?: string;
+  avatar?: string;
+}
 
 interface PatientAuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (email: string, mpin: string) => void;
+  onMpinSubmit: (mpin: string) => void;
+  onPatientSelect: (patientId: string) => void;
   loading?: boolean;
+  patients?: PatientOption[];
+  showPatientList?: boolean;
 }
 
 const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
   isOpen,
   onClose,
-  onSubmit,
+  onMpinSubmit,
+  onPatientSelect,
   loading = false,
+  patients = [],
+  showPatientList = false,
 }) => {
-  const [email, setEmail] = useState("");
   const [mpin, setMpin] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (isOpen) {
-      setEmail("");
       setMpin(["", "", "", "", "", ""]);
     }
   }, [isOpen]);
@@ -66,13 +79,12 @@ const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
 
   const handleSubmit = () => {
     const fullMpin = mpin.join("");
-    if (email && fullMpin.length === 6) {
-      onSubmit(email, fullMpin);
+    if (fullMpin.length === 6) {
+      onMpinSubmit(fullMpin);
     }
   };
 
   const handleReset = () => {
-    setEmail("");
     setMpin(["", "", "", "", "", ""]);
   };
 
@@ -97,83 +109,118 @@ const PatientAuthModal: React.FC<PatientAuthModalProps> = ({
           </div>
         </div>
 
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-          Access Patient Records
-        </h2>
-        <p className="text-sm text-gray-600 text-center mb-6">
-          Enter patient's email and 6-digit MPIN
-        </p>
+        {/* Show patient list if available */}
+        {showPatientList && patients.length > 0 ? (
+          <>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              Select Patient
+            </h2>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              {patients.length} patient{patients.length > 1 ? "s" : ""} found with this MPIN
+            </p>
 
-        {/* Email Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Patient Email
-          </label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="patient@example.com"
-              disabled={loading}
-              className="w-full h-12 pl-10 pr-4 border-2 border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-            />
-          </div>
-        </div>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {patients.map((patient) => (
+                <button
+                  key={patient._id}
+                  onClick={() => onPatientSelect(patient._id)}
+                  disabled={loading}
+                  className="w-full flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl hover:border-teal-500 hover:bg-teal-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <img
+                    src={patient.avatar || "https://cdn-icons-png.flaticon.com/256/6522/6522516.png"}
+                    alt={patient.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center gap-2">
+                      <User size={14} className="text-gray-400" />
+                      <span className="font-semibold text-gray-800">{patient.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                      <Phone size={12} />
+                      <span>{patient.phone}</span>
+                      {patient.age && <span>• {patient.age} yrs</span>}
+                      {patient.bloodGroup && <span>• {patient.bloodGroup}</span>}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
 
-        {/* MPIN Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Patient MPIN
-          </label>
-          <div className="flex justify-center gap-2">
-            {mpin.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => {
-                  inputRefs.current[index] = el;
-                }}
-                type="password"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleMpinChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={index === 0 ? handlePaste : undefined}
-                disabled={loading}
-                className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-              />
-            ))}
-          </div>
-        </div>
+            <button
+              onClick={() => {
+                handleReset();
+                onClose();
+              }}
+              className="w-full mt-4 h-12 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+            >
+              Back
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              Access Patient Records
+            </h2>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              Enter patient's 6-digit MPIN
+            </p>
 
-        {/* Buttons */}
-        <div className="flex gap-3">
-          <button
-            onClick={handleReset}
-            disabled={loading || (!email && mpin.every((d) => !d))}
-            className="flex-1 h-12 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Reset
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !email || mpin.some((d) => !d)}
-            className="flex-1 h-12 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-          >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              "Access Records"
-            )}
-          </button>
-        </div>
+            {/* MPIN Input */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Patient MPIN
+              </label>
+              <div className="flex justify-center gap-2">
+                {mpin.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
+                    type="password"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleMpinChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={index === 0 ? handlePaste : undefined}
+                    disabled={loading}
+                    className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                ))}
+              </div>
+            </div>
 
-        {/* Helper Text */}
-        <p className="text-xs text-gray-500 text-center mt-6">
-          The MPIN is set by the patient during registration. You can only access records of patients mapped to you.
-        </p>
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleReset}
+                disabled={loading || mpin.every((d) => !d)}
+                className="flex-1 h-12 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Reset
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={loading || mpin.some((d) => !d)}
+                className="flex-1 h-12 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "Search Patients"
+                )}
+              </button>
+            </div>
+
+            {/* Helper Text */}
+            <p className="text-xs text-gray-500 text-center mt-6">
+              The MPIN is set by the patient during registration. You can only access records of patients mapped to you.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

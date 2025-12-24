@@ -924,7 +924,16 @@ const ReportAnalysis: React.FC = () => {
                             </div>
                             <div className="col-span-3 text-center">Status</div>
                           </div>
-                          {results.map((result) => {
+                          {[...results].sort((a, b) => {
+                            const getStatusPriority = (status: string) => {
+                              const s = (status || '').toLowerCase().trim();
+                              if (s === 'high') return 0;
+                              if (s === 'low') return 1;
+                              if (s === 'normal') return 2;
+                              return 3;
+                            };
+                            return getStatusPriority(a.status) - getStatusPriority(b.status);
+                          }).map((result) => {
                             const colors = getTestResultColor(result.status);
                             return (
                               <div

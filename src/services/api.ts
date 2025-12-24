@@ -482,6 +482,15 @@ export const doctorsAPI = {
 
 // Vault API
 export const vaultAPI = {
+  // Search patients by MPIN
+  searchByMpin: (mpin: string, doctorPhone: string) =>
+    doctorAPI.post("/doctor/vault/search-by-mpin", { mpin, doctorPhone }),
+
+  // Access records by patient ID (after selection)
+  accessByPatient: (patientId: string, doctorPhone: string) =>
+    doctorAPI.post("/doctor/vault/access-by-patient", { patientId, doctorPhone }),
+
+  // Legacy methods (kept for compatibility)
   accessRecords: (email: string, mpin: string, doctorPhone: string) =>
     doctorAPI.post("/doctor/vault/access", { email, mpin, doctorPhone }),
 
