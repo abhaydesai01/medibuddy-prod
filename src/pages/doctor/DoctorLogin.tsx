@@ -74,10 +74,10 @@ const DoctorLogin: React.FC = () => {
     try {
       let formattedPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
       const response = await doctorAuthAPI.verifyOtp({ phone : formattedPhone, otp });
-
+      console.log(response.data.doctor);
       // Save to localStorage
       localStorage.setItem("doctorToken", response.data.token);
-      localStorage.setItem("doctor", JSON.stringify(response.data.doctor));
+      localStorage.setItem("doctorInfo", JSON.stringify(response.data.doctor));
       localStorage.setItem("doctorPhone", formattedPhone);
 
       // Dispatch to Redux store

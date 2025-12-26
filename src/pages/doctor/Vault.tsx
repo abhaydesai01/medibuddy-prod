@@ -30,6 +30,15 @@ import {
   X,
 } from "lucide-react";
 
+interface PatientOption {
+  _id: string;
+  name: string;
+  phone: string;
+  age?: number;
+  bloodGroup?: string;
+  avatar?: string;
+}
+
 interface PatientInfo {
   name: string;
   email?: string;
@@ -146,6 +155,10 @@ const Vault: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  
+  // New state for patient selection flow
+  const [matchingPatients, setMatchingPatients] = useState<PatientOption[]>([]);
+  const [showPatientList, setShowPatientList] = useState(false);
 
   // Normalize report data like ReportAnalysis.tsx does
   const normalizeReport = (r: any): Report => {
@@ -212,7 +225,7 @@ const Vault: React.FC = () => {
     };
   };
 
-  const handleAuthSubmit = async (email: string, mpin: string) => {
+  const handleMpinSubmit = async (mpin: string) => {
     setLoading(true);
     try {
       const doctorPhone = localStorage.getItem("doctorPhone");
@@ -221,7 +234,36 @@ const Vault: React.FC = () => {
         return;
       }
       
-      const response = await vaultAPI.accessRecords(email, mpin, doctorPhone);
+      const response = await vaultAPI.searchByMpin(mpin, doctorPhone);
+      const patients = response.data.patients || [];
+      
+      if (patients.length === 1) {
+        // Only one patient found, directly fetch their records
+        await handlePatientSelect(patients[0]._id);
+      } else {
+        // Multiple patients found, show selection list
+        setMatchingPatients(patients);
+        setShowPatientList(true);
+      }
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.error || "Failed to find patients with this MPIN"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePatientSelect = async (patientId: string) => {
+    setLoading(true);
+    try {
+      const doctorPhone = localStorage.getItem("doctorPhone");
+      if (!doctorPhone) {
+        toast.error("Doctor phone not found. Please log in again.");
+        return;
+      }
+      
+      const response = await vaultAPI.accessByPatient(patientId, doctorPhone);
       
       // Normalize the records - separate reports and prescriptions
       const rawRecords = response.data.records || [];
@@ -235,6 +277,8 @@ const Vault: React.FC = () => {
       setPatientInfo(response.data.patientInfo);
       setRecords(normalizedRecords);
       setIsAuthModalOpen(false);
+      setShowPatientList(false);
+      setMatchingPatients([]);
       toast.success(
         `Records loaded for ${response.data.patientInfo.name} (${response.data.totalRecords} records)`
       );
@@ -245,6 +289,12 @@ const Vault: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleModalClose = () => {
+    setIsAuthModalOpen(false);
+    setShowPatientList(false);
+    setMatchingPatients([]);
   };
 
   const reports = records.filter((r) => r.type !== "prescription") as Report[];
@@ -380,7 +430,7 @@ const Vault: React.FC = () => {
             Welcome, Dr. {doctor?.name}
           </h2>
           <p className="text-gray-600 max-w-md mx-auto mb-6">
-            Enter patient's email and 6-digit MPIN to securely access their complete
+            Enter patient's 6-digit MPIN to securely access their complete
             medical history and records.
           </p>
           <button
@@ -388,7 +438,7 @@ const Vault: React.FC = () => {
             className="inline-flex items-center gap-2 bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition"
           >
             <Lock size={20} />
-            Enter Credentials to Start
+            Enter MPIN to Start
           </button>
         </div>
       )}
@@ -750,7 +800,16 @@ const Vault: React.FC = () => {
                               <div className="col-span-3 text-center">Normal Range</div>
                               <div className="col-span-3 text-center">Status</div>
                             </div>
-                            {results.map((result, idx) => {
+                            {[...results].sort((a, b) => {
+                              const getStatusPriority = (status: string) => {
+                                const s = (status || '').toLowerCase().trim();
+                                if (s === 'high') return 0;
+                                if (s === 'low') return 1;
+                                if (s === 'normal') return 2;
+                                return 3;
+                              };
+                              return getStatusPriority(a.status) - getStatusPriority(b.status);
+                            }).map((result, idx) => {
                               const colors = getTestResultColor(result.status);
                               return (
                                 <div
@@ -887,17 +946,8 @@ const Vault: React.FC = () => {
                 </button>
               </div>
 
-              {selectedPrescription.summary && (
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-                  <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
-                  <p className="text-sm text-blue-700 whitespace-pre-wrap">
-                    {selectedPrescription.summary}
-                  </p>
-                </div>
-              )}
-
               {selectedPrescription.medications && selectedPrescription.medications.length > 0 && (
-                <div>
+                <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">
                     Medications
                   </h3>
@@ -945,6 +995,15 @@ const Vault: React.FC = () => {
                 </div>
               )}
 
+              {selectedPrescription.summary && (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+                  <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
+                  <p className="text-sm text-blue-700 whitespace-pre-wrap">
+                    {selectedPrescription.summary}
+                  </p>
+                </div>
+              )}
+
               {selectedPrescription.files && selectedPrescription.files.length > 0 && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-800 mb-3">Attached Files</h4>
@@ -972,9 +1031,12 @@ const Vault: React.FC = () => {
       {/* Patient Auth Modal */}
       <PatientAuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onSubmit={handleAuthSubmit}
+        onClose={handleModalClose}
+        onMpinSubmit={handleMpinSubmit}
+        onPatientSelect={handlePatientSelect}
         loading={loading}
+        patients={matchingPatients}
+        showPatientList={showPatientList}
       />
     </div>
   );
