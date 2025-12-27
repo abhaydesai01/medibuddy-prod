@@ -124,6 +124,9 @@ export const authAPI = {
 
   getPatientByPhone: (phone: string) =>
     api.get(`/auth/patient/${encodeURIComponent(phone)}`),
+
+  // Accept Terms & Conditions
+  acceptTnC: (phone: string) => api.post("/auth/accept-tnc", { phone }),
 };
 
 // --- MODIFIED: Profile API ---
@@ -386,9 +389,10 @@ export const prescriptionAPI = {
   },
 
   deletePrescription: (id: string) => {
-    const { id: userId } = getUserDetails();
-    if (!userId) return Promise.reject(new Error("User not logged in"));
-    return api.delete(`/reports/prescriptions/${userId}/${id}`);
+    const { phone } = getUserDetails();
+    if (!phone) return Promise.reject(new Error("User phone not found"));
+    // Send phone in request body to avoid URL encoding issues
+    return api.post(`/reports/prescriptions/delete/${id}`, { user_phone: phone });
   },
 };
 
@@ -445,6 +449,8 @@ export const doctorAuthAPI = {
 verifyOtp: (data: { phone: string; otp: string }) =>
   doctorAPI.post("/doctor/auth/verify-otp", data),
 
+  // Accept Terms & Conditions
+  acceptTnC: (phone: string) => doctorAPI.post("/doctor/auth/accept-tnc", { phone }),
 };
 
 // Doctor Availability API
@@ -489,6 +495,10 @@ export const vaultAPI = {
   // Access records by patient ID (after selection)
   accessByPatient: (patientId: string, doctorPhone: string) =>
     doctorAPI.post("/doctor/vault/access-by-patient", { patientId, doctorPhone }),
+
+  // Update prescription medications
+  updatePrescription: (prescriptionId: string, medications: any[]) =>
+    doctorAPI.put(`/doctor/vault/prescription/${prescriptionId}`, { medications }),
 
   // Legacy methods (kept for compatibility)
   accessRecords: (email: string, mpin: string, doctorPhone: string) =>

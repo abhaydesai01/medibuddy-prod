@@ -21,8 +21,13 @@ import {
 interface Medication {
   medicine: string;
   dosage: string;
-  frequency_per_day: number;
-  duration_days: number;
+  frequency?: string;
+  duration?: string;
+  instructions?: string;
+  food_relation?: string;
+  // Legacy fields for backward compatibility
+  frequency_per_day?: number;
+  duration_days?: number;
   meal_instruction?: string;
   timings?: string[];
 }
@@ -84,7 +89,7 @@ const PrescriptionManager: React.FC = () => {
       const data = response.data.prescriptions || response.data || [];
       const sorted = data.sort(
         (a: Prescription, b: Prescription) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.prescription_date || b.createdAt).getTime() - new Date(a.prescription_date || a.createdAt).getTime()
       );
       setPrescriptions(sorted);
     } catch (err: any) {
@@ -408,57 +413,63 @@ const PrescriptionManager: React.FC = () => {
                 </h3>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="hidden md:grid md:grid-cols-12 gap-4 p-3 bg-gray-50 font-semibold text-xs text-gray-500 uppercase tracking-wider">
-                    <div className="col-span-4">Medicine</div>
+                    <div className="col-span-3">Medicine</div>
                     <div className="col-span-2">Dosage</div>
                     <div className="col-span-2">Frequency</div>
-                    <div className="col-span-4">Instructions</div>
+                    <div className="col-span-2">Duration</div>
+                    <div className="col-span-3">Instructions</div>
                   </div>
                   <div className="divide-y divide-gray-200">
-                    {selectedPrescription.medications.map((med) => (
+                    {selectedPrescription.medications
+                      .filter((med) => {
+                        // Filter out rows where frequency or duration is 0
+                        const freqNum = parseInt((med.frequency || "").match(/(\d+)/)?.[1] || med.frequency_per_day?.toString() || "1");
+                        const durNum = parseInt((med.duration || "").match(/(\d+)/)?.[1] || med.duration_days?.toString() || "1");
+                        return freqNum > 0 && durNum > 0;
+                      })
+                      .map((med) => {
+                        // Helper to extract number from frequency/duration strings
+                        const getFrequencyNumber = (freq: string | undefined, freqPerDay?: number) => {
+                          if (freqPerDay) return freqPerDay.toString();
+                          if (!freq) return "";
+                          const match = freq.match(/(\d+)/);
+                          return match ? match[1] : "";
+                        };
+                        const getDurationNumber = (dur: string | undefined, durDays?: number) => {
+                          if (durDays) return durDays.toString();
+                          if (!dur) return "";
+                          const match = dur.match(/(\d+)/);
+                          return match ? match[1] : "";
+                        };
+
+                        const freqDisplay = getFrequencyNumber(med.frequency, med.frequency_per_day);
+                        const durDisplay = getDurationNumber(med.duration, med.duration_days);
+
+                        return (
                       <div
                         key={med.medicine}
                         className="grid grid-cols-1 md:grid-cols-12 gap-y-2 gap-x-4 p-3 text-sm items-center"
                       >
-                        <div className="col-span-full md:col-span-4 font-semibold text-gray-800">
+                        <div className="col-span-full md:col-span-3 font-semibold text-gray-800">
                           {med.medicine}
                         </div>
                         <div className="col-span-full md:col-span-2 text-gray-600">
-                          {med.dosage}
+                          {med.dosage || "—"}
                         </div>
                         <div className="col-span-full md:col-span-2 text-gray-600">
-                          {med.frequency_per_day}× daily
+                          {freqDisplay ? `${freqDisplay}× daily` : "—"}
                         </div>
-
-                        <div className="col-span-full md:col-span-4 text-gray-600 space-y-1">
-                          <div>
-                            <span className="font-medium">Duration:</span>{" "}
-                            {med.duration_days} days
-                          </div>
-
-                          <div>
-                            <span className="font-medium">When:</span>{" "}
-                            {med.meal_instruction || "—"}
-                          </div>
-
-                          {med.timings && med.timings.length > 0 && (
-                            <div>
-                              <span className="font-medium">Timings:</span>{" "}
-                              {med.timings.join(", ")}
-                            </div>
-                          )}
+                        <div className="col-span-full md:col-span-2 text-gray-600">
+                          {durDisplay ? `${durDisplay} days` : "—"}
                         </div>
-
+                        <div className="col-span-full md:col-span-3 text-gray-600">
+                          {med.food_relation || med.instructions || med.meal_instruction || "—"}
+                        </div>
                       </div>
-                    ))}
+                        );
+                    })}
                   </div>
                 </div>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
-                <p className="text-sm text-blue-700 whitespace-pre-wrap">
-                  {selectedPrescription.summary || "No summary available."}
-                </p>
               </div>
             </div>
           </div>

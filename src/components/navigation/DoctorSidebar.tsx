@@ -48,11 +48,7 @@ const DoctorSidebar: React.FC = () => {
       icon: <Calendar size={20} />,
       path: "/doctor/appointments",
     },
-    {
-      name: "Prescriptions",
-      icon: <FileText size={20} />,
-      path: "/doctor/prescriptions",
-    },
+
   ];
 
   return (

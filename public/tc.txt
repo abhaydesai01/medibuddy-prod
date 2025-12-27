@@ -1,0 +1,203 @@
+﻿1. GENERAL TERMS OF USE
+1.1 Welcome to Mediimate. These Terms & Conditions of Use (hereinafter referred to as the “Terms” or “Agreement”) constitute a valid, binding, and enforceable legal contract between you, being the individual or legal entity accessing or using the Platform (hereinafter referred to as the “User”, “you”, or “your”), and Jivayoi Wellness and Living Private Limited, a company incorporated under the laws of India, which owns, operates, and manages the Mediimate platform (hereinafter referred to as “Mediimate”, “Company”, “we”, “us”, or “our”).
+This Agreement governs your access to, interaction with, and use of the Mediimate website, mobile application, and all associated digital platforms, tools, features, services, and content made available by Mediimate (collectively, the “Platform”).
+1.2 For the purposes of these Terms:
+* References to “we”, “us”, or “our” shall be construed as references to Jivayoi Wellness and Living Private Limited, operating under the brand name Mediimate.
+* References to “you”, “your”, or “User” shall mean any natural person, legal person, organization, healthcare professional, institution, or other entity who accesses, browses, registers on, or otherwise uses the Platform, whether directly or indirectly.
+* References to the “Platform” shall include the Mediimate website, mobile application, software systems, dashboards, APIs, content, features, tools, and services, whether existing now or introduced in the future.
+1.3 The Platform, together with all products, features, tools, content, and services made available through Mediimate, is provided subject to strict compliance with these Terms, the Privacy Policy, and all applicable laws, rules, and regulations in force in India.
+Any use of the Platform in violation of these Terms shall be deemed unauthorized and may result in suspension or termination of access, without prejudice to Mediimate’s legal rights and remedies.
+1.4 These Terms shall be read in conjunction with Mediimate’s Privacy Policy, which governs the collection, processing, storage, use, and protection of personal and sensitive personal data. The Privacy Policy forms an integral and inseparable part of this Agreement.
+In the event of any inconsistency between these Terms and the Privacy Policy, the provisions offering higher protection to Mediimate and/or compliance with applicable law shall prevail.
+1.5 By accessing, browsing, registering on, downloading, installing, or using any part of the Platform, you expressly acknowledge, confirm, and agree that:
+* You have read and understood these Terms and the Privacy Policy;
+* You are legally competent to enter into a binding contract under applicable law;
+* Your access to and use of the Platform constitutes your unconditional acceptance of these Terms and the Privacy Policy; and
+* This Agreement creates legally binding obligations upon you.
+1.6 Mediimate reserves the right, at its sole and absolute discretion, to revise, amend, modify, update, or replace these Terms, in whole or in part, at any time, with or without prior notice to you.
+Such revised or updated Terms shall become effective immediately upon being published on the Platform. Your continued access to or use of the Platform after such publication shall be deemed to constitute your acceptance of the Terms as revised.
+You are advised to review these Terms periodically to remain informed of any changes.
+1.7 You expressly acknowledge and agree that your use of the Platform signifies your free, informed, and voluntary consent to be bound by the terms and conditions set forth in this Agreement, and that this Agreement shall be enforceable in accordance with applicable law.
+IF YOU DO NOT AGREE TO THESE TERMS, YOU MUST IMMEDIATELY DISCONTINUE ACCESSING OR USING THE PLATFORM.
+________________
+
+
+2. USE OF CONTENT AND SERVICES
+2.1 The User is permitted to access and use the Platform strictly for the limited and lawful purposes for which the Platform is made available, including but not limited to the secure storage, access, organization, and management of medical records, facilitation of healthcare consultations, retrieval and sharing of health-related information, and such other healthcare support services as may be offered by Mediimate from time to time.
+The User expressly agrees that the Platform shall be used solely for personal, lawful, and healthcare-related purposes in accordance with these Terms and applicable law.
+2.2 The information, materials, content, and services provided or made available on or through the Platform are offered in connection with Mediimate’s business and service offerings and are intended solely for use in furtherance of the purposes of the Platform.
+The User agrees that such information and content shall not be used, directly or indirectly, to solicit, promote, or obtain similar services from competing service providers, or to engage in any activity that competes with, undermines, or is adverse to the legitimate business interests of Mediimate.
+2.3 The User undertakes and agrees to access and use the Platform and its content exclusively for the purposes expressly permitted under these Terms and shall not access, reproduce, distribute, disclose, or otherwise use any content, data, or information obtained through the Platform for the benefit of any third party who is not directly related to or authorized under the intended purposes of the Platform.
+Any unauthorized use, disclosure, or dissemination of content or data shall constitute a material breach of these Terms.
+2.4 All copyrights, trademarks, service marks, trade names, logos, designs, software, text, images, graphics, audio, video, and other proprietary materials made available on or through the Platform are owned by or licensed to Mediimate and are protected by applicable intellectual property laws.
+The User may view, download, or print content from the Platform solely for personal, non-commercial use, provided that all copyright, trademark, and other proprietary notices remain intact. Any commercial use, reproduction, modification, distribution, or exploitation of any portion of the Platform or its content, in any form or manner whatsoever, shall require the prior written consent of Mediimate or the relevant rights holder, as applicable.
+________________
+
+
+3. USE OF THE PLATFORM
+3.1 Access to and use of the Platform is granted at the sole discretion of Mediimate. Mediimate reserves the absolute right, without obligation to assign any reason, to allow, restrict, suspend, or terminate the User’s access to the Platform, in whole or in part, at any time, with or without notice.
+The User expressly acknowledges that use of the Platform and any services availed therefrom does not confer upon the User any vested or continuing right to access or use the Platform.
+3.2 The User agrees that all access to and use of the Platform shall be in strict compliance with these Terms and all applicable laws, rules, and regulations in force in India.
+Without limiting the generality of the foregoing, the User expressly undertakes that they shall not, directly or indirectly, use the Platform to:
+3.2.1 Impersonate any person or entity, or falsely state or otherwise misrepresent the User’s affiliation with any person, entity, organization, or institution;
+3.2.2 Interfere with, disrupt, or attempt to interfere with the operation, integrity, or security of the Platform or any services provided thereon, including but not limited to deliberate attempts to overload systems, flooding of networks, crashing of servers, or any action that imposes an unreasonable or disproportionately large load on the Platform or its supporting infrastructure;
+3.2.3 Use any program, script, command, automated process, or other mechanism, or transmit any message or request of any kind, that is designed to interfere with, disrupt, or adversely affect any User’s terminal session, system, or experience on the Platform;
+3.2.4 Circumvent, attempt to circumvent, or breach any security, authentication, or access-control mechanisms of the Platform, or access any data, account, or information that the User is not expressly authorized to access, including logging into another User’s account or attempting to obtain confidential or restricted information;
+3.2.5 Upload, post, transmit, or otherwise make available through the Platform any content that is false, misleading, fabricated, unlawful, harmful, threatening, abusive, harassing, defamatory, obscene, vulgar, invasive of privacy, hateful, or otherwise objectionable;
+3.2.6 Upload, post, transmit, or otherwise make available any content that infringes any patent, trademark, copyright, trade secret, confidential information, or other proprietary or intellectual property rights of any third party;
+3.2.7 Upload, post, transmit, or otherwise make available any material that contains software viruses, malware, ransomware, or any other computer code, files, or programs designed to interrupt, destroy, damage, or limit the functionality of any software, hardware, network, or telecommunications equipment.
+3.3 The User acknowledges and agrees that Mediimate shall have the right to investigate any suspected violation of this Section and to take such action as it deems appropriate, including removal of content, suspension or termination of access, and initiation of legal proceedings, without incurring any liability to the User.
+________________
+
+
+4. USER SUBMISSIONS
+4.1 Any and all information, data, medical records, documents, images, communications, anecdotes, text, files, or other materials (collectively, the “Submissions”) voluntarily submitted, uploaded, posted, shared, transmitted, or otherwise made available by the User on or through the Platform shall be deemed to have been provided at the User’s sole discretion, responsibility, and risk.
+The User acknowledges that all such Submissions shall be binding upon the User and shall be governed by the terms and conditions set forth herein.
+4.2 The User expressly acknowledges and agrees that Mediimate does not verify, validate, authenticate, or otherwise confirm the accuracy, completeness, legality, or medical correctness of any Submissions, including medical records or health-related information, and that Mediimate acts solely as a technology platform and storage facilitator with respect to such Submissions.
+Any reliance placed by the User or any third party on the Submissions shall be strictly at their own risk.
+4.3 The User agrees and acknowledges that, to the extent permitted under applicable law, all rights, title, and interest in and to the Submissions, including any intellectual property rights therein, shall vest with the User. However, by submitting such Submissions, the User grants Mediimate a worldwide, non-exclusive, royalty-free, transferable, and sublicensable license to store, host, process, reproduce, use, modify, adapt, display, and transmit such Submissions solely for the purposes of providing, operating, improving, and administering the Platform and the services offered thereon.
+4.4 Without prejudice to the foregoing, the User expressly consents to Mediimate using Submissions in an anonymized, aggregated, or de-identified form for purposes including, but not limited to, analytics, research, platform optimization, and the development or operation of artificial intelligence or machine-learning algorithms intended to provide predictive, preventive, or analytical health insights, provided that such use does not identify the User personally.
+4.5 Mediimate does not actively monitor or scrutinize all Submissions uploaded by Users on the Platform; however, Mediimate reserves the unfettered right, at its sole discretion and without prior notice, to remove, restrict, disable, or delete any Submission that it considers to be in violation of these Terms, applicable law, or its internal policies, or that it otherwise deems objectionable or inappropriate.
+4.6 The User represents and warrants that they possess all necessary rights, consents, permissions, and authorizations to submit the Submissions to the Platform and to grant the rights and licenses set forth in this Section, and that such Submissions do not violate any applicable law or the rights of any third party.
+________________
+
+
+5. LINKS TO OTHER WEBSITES
+5.1 The Platform may contain links, references, or access points to websites, applications, or digital platforms operated by third parties that are not owned, controlled, or managed by Mediimate (collectively referred to as “Third-Party Websites”).
+Such links are provided solely for the convenience of the User and do not constitute any endorsement, sponsorship, recommendation, or approval by Mediimate of the Third-Party Websites, their operators, or the content, products, or services made available thereon.
+5.2 Mediimate does not exercise any control over, and expressly disclaims any responsibility or liability for, the accuracy, completeness, legality, availability, or content of any Third-Party Websites, including but not limited to their terms of use, privacy policies, data handling practices, or security measures.
+The User acknowledges that Mediimate makes no representations or warranties, whether express or implied, with respect to the performance, reliability, or suitability of any Third-Party Websites.
+5.3 Access to and use of any Third-Party Websites shall be at the User’s sole risk. Mediimate shall not be liable for any loss, damage, or harm arising out of or in connection with the User’s access to or use of any Third-Party Websites, including but not limited to loss of data, financial loss, or exposure to harmful or objectionable content.
+________________
+
+
+6. PRIVACY AND DATA SECURITY
+6.1 Mediimate considers the User’s access to and use of the Platform to be private and confidential in nature. However, the User expressly acknowledges and agrees that Mediimate may access, monitor, preserve, or disclose information relating to the User, the User’s account, Submissions, communications, or use of the Platform, where such access or disclosure is reasonably necessary to:
+* Comply with applicable laws, rules, regulations, legal processes, court orders, subpoenas, notices, or governmental requests;
+* Enforce these Terms or the Privacy Policy;
+* Protect and defend the rights, property, or safety of Mediimate, its directors, officers, employees, agents, affiliates, Users, healthcare professionals, or the public at large.
+By agreeing to these Terms, the User expressly consents to such access and disclosures to the extent permitted under applicable law.
+6.2 In order to provide the services offered through the Platform, Mediimate employs reasonable and appropriate technical, administrative, and organizational safeguards designed to protect the security, integrity, and confidentiality of communications, data transmissions, and information exchanged through the Platform.
+Notwithstanding the foregoing, the User acknowledges that no method of transmission over the internet or method of electronic storage is completely secure, and Mediimate does not warrant or guarantee the absolute security, authenticity, integrity, or confidentiality of any transactions, communications, or data transmitted through the Platform.
+6.3 The User further acknowledges that internet-based communications may be susceptible to interception, interference, or access by unauthorized third parties. Accordingly, while Mediimate endeavors to use commercially reasonable means to protect the Platform from security breaches, viruses, malware, or unauthorized software, Mediimate makes no representation or warranty that the Platform shall be free from such risks.
+To the maximum extent permitted by law, Mediimate shall not be liable for any loss or damage arising from unauthorized access, interception, or misuse of data transmitted through or stored on the Platform.
+________________
+
+
+7. DISCLAIMER OF WARRANTIES
+7.1 The User expressly understands, acknowledges, and agrees that access to and use of the Platform is at the User’s sole risk. The Platform, including all content, information, software, tools, features, and services made available thereon, is provided on an “as is” and “as available” basis.
+To the fullest extent permitted under applicable law, Mediimate expressly disclaims any and all warranties, whether express, implied, statutory, or otherwise, including but not limited to implied warranties of merchantability, fitness for a particular purpose, non-infringement, accuracy, completeness, reliability, quality, performance, availability, or non-interference.
+
+
+7.2 Without limiting the generality of the foregoing, Mediimate makes no representation or warranty that:
+* The Platform will meet the User’s requirements or expectations;
+* Access to or use of the Platform will be uninterrupted, timely, secure, or error-free;
+* Any defects, errors, or inaccuracies in the Platform will be corrected;
+* The results obtained from the use of the Platform will be accurate, reliable, or suitable for any particular purpose; or
+* The quality of any services, information, or materials obtained through the Platform will meet the User’s expectations.
+The User acknowledges that it is their sole responsibility to implement and maintain appropriate safeguards, including virus protection and data backup procedures, to protect their systems and data.
+7.3 Any material downloaded, accessed, or otherwise obtained through the use of the Platform is done at the User’s own discretion and risk. The User shall be solely responsible for any damage to their computer systems, mobile devices, software, hardware, or loss of data that results from the download or use of any such material.
+7.4 No advice, information, or communication, whether oral or written, obtained by the User from Mediimate or through the Platform shall create any warranty not expressly stated in these Terms.
+________________
+
+
+8. LIMITATION AND EXCLUSION OF LIABILITY
+8.1 The User expressly understands, acknowledges, and agrees that, to the maximum extent permitted under applicable law, neither Mediimate nor its directors, officers, employees, agents, affiliates, service providers, or licensors shall be liable for any direct, indirect, incidental, special, consequential, punitive, or exemplary damages whatsoever, including but not limited to damages arising from or relating to:
+8.1.1 The User’s access to, use of, or inability to access or use the Platform, including any interruption, suspension, or termination of services;
+8.1.2 Any unauthorized access to, alteration of, or use of the User’s transmissions, data, medical records, or communications;
+8.1.3 Any statements, representations, conduct, advice, or omissions of any third party, including healthcare professionals or other Users, made available through the Platform;
+8.1.4 Any other matter arising out of or in connection with the Platform or the services provided thereon.
+8.2 If the User is dissatisfied with the Platform, any services offered thereon, or any of the information or content made available through the Platform, or if the User does not agree to any part of these Terms, the User’s sole and exclusive remedy shall be to discontinue access to and use of the Platform.
+8.3 Notwithstanding anything to the contrary contained herein, and to the extent permitted under applicable law, the aggregate liability of Mediimate, its directors, officers, employees, agents, and affiliates to the User for any and all claims arising out of or relating to the use of the Platform or the services provided thereon shall, in all circumstances, be limited to the total amount of fees, if any, actually paid by the User to Mediimate for medical record storage or consultation services availed through the Platform.
+8.4 The User expressly agrees that they shall not initiate, participate in, or be a member of any class action, collective action, representative action, or consolidated proceeding against Mediimate or any of its directors, officers, employees, agents, or affiliates arising out of or relating to the use of the Platform or these Terms.
+8.5 The User further agrees that Mediimate shall not be liable for any representations, warranties, or statements made on or through any Third-Party Websites linked to or accessible from the Platform, or for any loss or damage arising from reliance on information provided by such third parties.
+________________
+
+
+9. INTELLECTUAL PROPERTY RIGHTS
+9.1 The Platform, including but not limited to the website, mobile application, software, source code, object code, databases, text, graphics, images, illustrations, audio, video, design elements, user interfaces, layout, compilation, and all other content and materials made available on or through the Platform, is protected by applicable copyright, trademark, trade dress, and other intellectual property laws.
+All such intellectual property rights are owned by or licensed to Jivayoi Wellness and Living Private Limited, operating under the brand name Mediimate, unless expressly stated otherwise.
+9.2 Subject to the User’s compliance with these Terms, Mediimate grants the User a limited, personal, revocable, non-exclusive, non-transferable, and non-sublicensable license to access and use the Platform and its object code solely for the User’s personal, non-commercial use on a single computer, mobile device, or other authorized electronic device.
+The User expressly agrees that they shall not, and shall not permit any third party to:
+* Copy, reproduce, modify, adapt, translate, or create derivative works from the Platform or any part thereof;
+* Reverse engineer, decompile, disassemble, or otherwise attempt to discover the source code or underlying structure of the Platform;
+* Sell, assign, sublicense, lease, rent, loan, or otherwise transfer any rights in the Platform;
+* Use the Platform in any manner not expressly permitted under these Terms.
+9.3 All trademarks, service marks, trade names, logos, product names, service names, and other brand identifiers displayed on the Platform (collectively, the “Marks”) are the exclusive property of Mediimate or its affiliates or licensors.
+The User agrees not to copy, display, use, or otherwise exploit any of the Marks without the prior written consent of Mediimate. The Marks shall not be used in any manner that is likely to cause confusion, deception, disparagement, dilution, or in connection with any product or service not authorized or endorsed by Mediimate.
+9.4 The entire Platform, including all content, code, scripts, databases, and materials associated therewith, is protected by copyright and other intellectual property laws. All rights not expressly granted to the User under these Terms are reserved by Mediimate.
+
+
+
+
+________________
+
+
+10. INDEMNIFICATION
+10.1 The User agrees to defend, indemnify, and hold harmless Jivayoi Wellness and Living Private Limited, operating under the brand name Mediimate, and its directors, officers, employees, agents, affiliates, service providers, and licensors (collectively, the “Indemnified Parties”) from and against any and all claims, demands, actions, proceedings, liabilities, losses, damages, costs, and expenses of every kind and nature whatsoever, including without limitation reasonable legal fees and expenses, arising out of or in connection with:
+* The User’s access to, use of, or inability to use the Platform;
+* Any breach or alleged breach by the User of these Terms, the Privacy Policy, or any applicable law;
+* Any Submissions, data, medical records, content, or information submitted, uploaded, posted, or transmitted by the User through the Platform;
+* Any violation by the User of the rights of any third party, including intellectual property rights, privacy rights, or confidentiality obligations;
+* Any misuse of the Platform or services in a manner not expressly permitted under these Terms.
+10.2 This indemnification obligation shall survive the termination or expiration of the User’s access to the Platform or this Agreement and shall remain enforceable to the fullest extent permitted under applicable law.
+________________
+
+
+11. MODIFICATION
+11.1 Mediimate reserves the right, at its sole and absolute discretion, to update, revise, supplement, modify, amend, or otherwise change these Terms, in whole or in part, at any time and from time to time.
+Any such updates, revisions, supplements, modifications, or amendments shall become effective immediately upon being published or made available on the Platform, unless otherwise expressly stated.
+11.2 The User expressly acknowledges and agrees that they shall be bound by these Terms, as updated, revised, supplemented, modified, or amended, regardless of whether the User has received actual notice of such changes or continues to access or use the Platform after such changes.
+The User agrees that it is their responsibility to review these Terms periodically to remain informed of any modifications.
+________________
+
+
+12. ENTIRE AGREEMENT
+12.1 These Terms, together with the Privacy Policy and any other policies, guidelines, or notices expressly incorporated herein by reference, constitute the entire agreement between the User and Mediimate with respect to the User’s access to and use of the Platform.
+12.2 This Agreement supersedes and replaces any and all prior or contemporaneous agreements, understandings, representations, warranties, communications, or arrangements, whether written or oral, between the User and Mediimate relating to the subject matter hereof.
+The User acknowledges that they have not relied upon any statement, representation, or warranty not expressly set forth in this Agreement.
+Continuing with Section 13, drafted in the same formal, verbose, legal-document style, closely aligned with your original structure and intent.
+________________
+
+
+13. SEVERABILITY
+13.1 If any provision, clause, or part of these Terms is held or determined by any court of competent jurisdiction or other competent authority to be unlawful, invalid, void, voidable, or unenforceable for any reason whatsoever, such provision shall be deemed to be severed from these Terms.
+13.2 The severance of any such provision shall not affect the legality, validity, or enforceability of the remaining provisions of these Terms, which shall continue in full force and effect as if the severed provision had never been included herein.
+________________
+
+
+14. GOVERNING LAW AND JURISDICTION
+14.1 These Terms, this Agreement, and any dispute, claim, controversy, or difference arising out of or in connection with these Terms, the Platform, or the services provided by Mediimate, including any question regarding their existence, validity, interpretation, performance, breach, or termination, shall be governed by and construed in accordance with the laws of India, without regard to any principles of conflict of laws.
+14.2 The User hereby expressly agrees and consents that the courts of competent jurisdiction in India shall have exclusive jurisdiction to adjudicate and resolve any disputes arising out of or in connection with these Terms, the Platform, or the services provided thereunder.
+________________
+
+
+15. TERMINATION
+15.1 Mediimate reserves the right, at its sole and absolute discretion, to suspend, restrict, or terminate the User’s access to and use of the Platform, in whole or in part, at any time, with or without prior notice, and with or without cause, including but not limited to circumstances where the User:
+* Violates or breaches any provision of these Terms or the Privacy Policy;
+* Fails to provide accurate, complete, or current registration or account information;
+* Engages in any unlawful, fraudulent, or abusive activity in connection with the Platform;
+* Uses or attempts to use the Platform in a manner that, in Mediimate’s reasonable opinion, may cause harm to Mediimate, other Users, healthcare professionals, or third parties.
+15.2 Upon termination of the User’s access for any reason whatsoever, the User’s right to access and use the Platform shall immediately cease. Notwithstanding such termination, all provisions of these Terms which by their nature or intent are intended to survive termination, including but not limited to representations, warranties, disclaimers, limitation of liability, indemnification obligations, intellectual property rights, governing law, and jurisdiction, shall survive and remain in full force and effect.
+15.3 Termination of access to the Platform shall be without prejudice to any rights, remedies, or claims that Mediimate may have against the User under these Terms, applicable law, or otherwise.
+________________
+
+
+16. CONTACT INFORMATION
+16.1
+If the User has any questions, comments, concerns, requests, or grievances relating to these Terms, the Privacy Policy, the Platform, or the services provided by Mediimate, or if the User wishes to exercise any rights available under applicable law, the User may contact Mediimate through the details provided below.
+16.2
+All communications, notices, or legal correspondence intended for Mediimate shall be addressed as follows:
+Email: support@mediimate.com
+Registered / Corporate Office: 8 JP Nagar 9th phase 3rd block, 8th phase, Bengaluru-560076
+The User may also contact Mediimate by completing and submitting the contact form available on the Platform, where applicable.
+16.3 Mediimate shall use reasonable efforts to respond to User communications within a reasonable timeframe. However, no specific response time is guaranteed, and failure to respond immediately shall not constitute a breach of these Terms.
+________________
+
+
+17. LEGAL ENTITY REPRESENTATION AND OWNERSHIP
+17.1 Mediimate is a brand name, platform, and product owned, operated, and managed by Jivayoi Wellness and Living Private Limited, a company incorporated under the laws of India.
+All references to “Mediimate”, “we”, “us”, or “our” in these Terms, the Privacy Policy, or any other related documentation shall be deemed to refer to Jivayoi Wellness and Living Private Limited, which acts as the owner, operator, and, where applicable, the Data Fiduciary in accordance with the Digital Personal Data Protection Act, 2023.
+17.2 All rights, obligations, liabilities, and responsibilities arising under or in connection with these Terms shall accrue to and be enforceable by or against Jivayoi Wellness and Living Private Limited, notwithstanding the use of the brand name Mediimate.
+17.3 These Terms, the Platform, and all related documentation are the exclusive intellectual property of Jivayoi Wellness and Living Private Limited. No part of these Terms or the Platform may be reproduced, copied, distributed, altered, published, or otherwise used, in whole or in part, in any form or manner whatsoever, whether directly or indirectly, without the prior written consent of Jivayoi Wellness and Living Private Limited, except as expressly permitted under these Terms or applicable law.
+17.4 Nothing contained in these Terms shall be construed as granting, by implication, estoppel, or otherwise, any license or right to use Mediimate’s name, trademarks, logos, or other proprietary identifiers, except as expressly permitted herein.

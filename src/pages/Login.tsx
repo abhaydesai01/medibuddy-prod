@@ -6,6 +6,7 @@ import { setCredentials } from "../store/slices/authSlice";
 // Assuming profileAPI is added to your services/api file
 import { authAPI, profileAPI } from "../services/api";
 import { Heart } from "lucide-react";
+import TermsAndConditionsModal from "../components/TermsAndConditionsModal";
 
 const Login: React.FC = () => {
   // --- State Management for Multi-Step Flow ---
@@ -15,6 +16,8 @@ const Login: React.FC = () => {
   const [name, setName] = useState(""); // For new users
   const [email, setEmail] = useState(""); // For new users
   const [loading, setLoading] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [pendingLoginData, setPendingLoginData] = useState<{ user: any; token: string } | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -111,15 +114,26 @@ const Login: React.FC = () => {
 
     try {
       const response = await authAPI.verifyOtp(fullPhoneNumber, otp);
-      dispatch(
-        setCredentials({
-          user: response.data.user,
-          token: response.data.token,
-        })
-      );
+      toast.success("OTP Verified!", { id: loadingToastId });
+      
+      const userData = {
+        user: response.data.user,
+        token: response.data.token,
+      };
+      
       localStorage.setItem("patientPhone", fullPhoneNumber);
-      toast.success("Login Successful! Redirecting...", { id: loadingToastId });
-      setTimeout(() => navigate("/dashboard"), 1000);
+      
+      // Check if user has already accepted T&C
+      if (response.data.user.hasAcceptedTnC) {
+        // User already accepted, proceed directly
+        dispatch(setCredentials(userData));
+        toast.success("Login Successful! Redirecting...");
+        setTimeout(() => navigate("/dashboard"), 500);
+      } else {
+        // Show T&C modal for first-time acceptance
+        setPendingLoginData(userData);
+        setShowTermsModal(true);
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Invalid OTP.", {
         id: loadingToastId,
@@ -127,6 +141,39 @@ const Login: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle T&C acceptance
+  const handleTermsAccept = async () => {
+    if (pendingLoginData) {
+      try {
+        const fullPhoneNumber = `+91${phoneNumber}`;
+        // Update T&C acceptance in backend
+        await authAPI.acceptTnC(fullPhoneNumber);
+        
+        dispatch(setCredentials(pendingLoginData));
+        toast.success("Login Successful! Redirecting...");
+        setShowTermsModal(false);
+        setTimeout(() => navigate("/dashboard"), 500);
+      } catch (error) {
+        console.error("Failed to save T&C acceptance:", error);
+        // Still allow login even if T&C save fails
+        dispatch(setCredentials(pendingLoginData));
+        toast.success("Login Successful! Redirecting...");
+        setShowTermsModal(false);
+        setTimeout(() => navigate("/dashboard"), 500);
+      }
+    }
+  };
+
+  // Handle T&C decline
+  const handleTermsDecline = () => {
+    setShowTermsModal(false);
+    setPendingLoginData(null);
+    localStorage.removeItem("patientPhone");
+    toast.error("You must accept the Terms & Conditions to continue.");
+    setStep("phone");
+    setOtp("");
   };
 
   const renderFormContent = () => {
@@ -291,6 +338,14 @@ const Login: React.FC = () => {
   return (
     <div className="h-screen bg-white overflow-hidden lg:grid lg:grid-cols-2">
       <Toaster position="top-right" reverseOrder={false} />
+      
+      {/* Terms & Conditions Modal */}
+      <TermsAndConditionsModal
+        isOpen={showTermsModal}
+        onAccept={handleTermsAccept}
+        onDecline={handleTermsDecline}
+      />
+      
       {/* Left Panel */}
       <div className="relative hidden w-full h-full flex-col justify-between bg-gradient-to-br from-slate-900 to-blue-900 p-8 text-white lg:flex">
         {/* Decorative blobs */}

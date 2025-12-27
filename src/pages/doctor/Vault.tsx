@@ -8,7 +8,6 @@ import {
   Lock,
   FileText,
   Calendar,
-  User,
   Heart,
   AlertCircle,
   Phone,
@@ -28,6 +27,8 @@ import {
   CalendarDays,
   ClipboardList,
   X,
+  Edit2,
+  Save,
 } from "lucide-react";
 
 interface PatientOption {
@@ -94,8 +95,15 @@ interface Report {
 interface Medication {
   medicine: string;
   dosage: string;
-  frequency_per_day: number;
-  duration_days: number;
+  frequency?: string;
+  duration?: string;
+  instructions?: string;
+  timing_display?: string;
+  suggested_time?: string;
+  food_relation?: string;
+  // Legacy fields (for backward compatibility)
+  frequency_per_day?: number;
+  duration_days?: number;
   meal_instruction?: string;
   timings?: string[];
 }
@@ -156,6 +164,11 @@ const Vault: React.FC = () => {
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   
+  // Edit prescription state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedMedications, setEditedMedications] = useState<Medication[]>([]);
+  const [savingPrescription, setSavingPrescription] = useState(false);
+
   // New state for patient selection flow
   const [matchingPatients, setMatchingPatients] = useState<PatientOption[]>([]);
   const [showPatientList, setShowPatientList] = useState(false);
@@ -903,13 +916,6 @@ const Vault: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      {prescription.summary && (
-                        <div className="mt-3 bg-blue-50 rounded-lg p-3">
-                          <p className="text-sm text-blue-700 line-clamp-2">
-                            {prescription.summary}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -938,12 +944,73 @@ const Vault: React.FC = () => {
                     )}
                   </p>
                 </div>
-                <button
-                  onClick={() => setSelectedPrescription(null)}
-                  className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
-                >
-                  <X size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {!isEditing ? (
+                    <button
+                      onClick={() => {
+                        setIsEditing(true);
+                        // Deep clone medications to preserve all existing fields
+                        setEditedMedications(
+                          selectedPrescription.medications 
+                            ? selectedPrescription.medications.map(med => ({ ...med }))
+                            : []
+                        );
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                      <Edit2 size={16} />
+                      Edit
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          setEditedMedications([]);
+                        }}
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={async () => {
+                          setSavingPrescription(true);
+                          try {
+                            // Send the full editedMedications - preserve all fields from original
+                            // The editedMedications already contains all original fields (deep cloned on edit start)
+                            // Only the fields user modified in the inputs are different
+                            await vaultAPI.updatePrescription(selectedPrescription._id, editedMedications);
+                            // Update local state
+                            const updatedPrescription = { ...selectedPrescription, medications: editedMedications };
+                            setSelectedPrescription(updatedPrescription);
+                            setRecords(prev => prev.map(r => r._id === selectedPrescription._id ? { ...r, medications: editedMedications } as any : r));
+                            setIsEditing(false);
+                            alert("Prescription updated successfully");
+                          } catch (err: any) {
+                            toast.error(err.response?.data?.error || "Failed to update prescription");
+                          } finally {
+                            setSavingPrescription(false);
+                          }
+                        }}
+                        disabled={savingPrescription}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:bg-gray-400"
+                      >
+                        <Save size={16} />
+                        {savingPrescription ? "Saving..." : "Save"}
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSelectedPrescription(null);
+                      setIsEditing(false);
+                      setEditedMedications([]);
+                    }}
+                    className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
               {selectedPrescription.medications && selectedPrescription.medications.length > 0 && (
@@ -953,54 +1020,128 @@ const Vault: React.FC = () => {
                   </h3>
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <div className="hidden md:grid md:grid-cols-12 gap-4 p-3 bg-gray-50 font-semibold text-xs text-gray-500 uppercase tracking-wider">
-                      <div className="col-span-4">Medicine</div>
+                      <div className="col-span-3">Medicine</div>
                       <div className="col-span-2">Dosage</div>
                       <div className="col-span-2">Frequency</div>
-                      <div className="col-span-4">Instructions</div>
+                      <div className="col-span-2">Duration</div>
+                      <div className="col-span-3">Instructions</div>
                     </div>
                     <div className="divide-y divide-gray-200">
-                      {selectedPrescription.medications.map((med, idx) => (
+                      {(isEditing ? editedMedications : selectedPrescription.medications.filter((med) => {
+                          // Only filter in view mode - hide rows with 0 frequency or duration
+                          const freqNum = med.frequency_per_day || 1;
+                          const durNum = med.duration_days || 1;
+                          return freqNum > 0 && durNum > 0;
+                        }))
+                        .map((med, idx) => {
+                        // Get display values - prioritize numeric fields
+                        const freqDisplay = med.frequency_per_day?.toString() || "";
+                        const durDisplay = med.duration_days?.toString() || "";
+                        const instructionDisplay = med.meal_instruction || med.food_relation || med.instructions || "";
+                        
+                        return (
                         <div
                           key={idx}
                           className="grid grid-cols-1 md:grid-cols-12 gap-y-2 gap-x-4 p-3 text-sm items-center"
                         >
-                          <div className="col-span-full md:col-span-4 font-semibold text-gray-800">
-                            {med.medicine}
-                          </div>
-                          <div className="col-span-full md:col-span-2 text-gray-600">
-                            {med.dosage}
-                          </div>
-                          <div className="col-span-full md:col-span-2 text-gray-600">
-                            {med.frequency_per_day}× daily
-                          </div>
-                          <div className="col-span-full md:col-span-4 text-gray-600 space-y-1">
-                            <div>
-                              <span className="font-medium">Duration:</span> {med.duration_days} days
-                            </div>
-                            {med.meal_instruction && (
-                              <div>
-                                <span className="font-medium">When:</span> {med.meal_instruction}
+                          {isEditing ? (
+                            <>
+                              <div className="col-span-full md:col-span-3">
+                                <input
+                                  type="text"
+                                  value={med.medicine || ""}
+                                  onChange={(e) => {
+                                    const updated = [...editedMedications];
+                                    updated[idx] = { ...updated[idx], medicine: e.target.value };
+                                    setEditedMedications(updated);
+                                  }}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
                               </div>
-                            )}
-                            {med.timings && med.timings.length > 0 && (
-                              <div>
-                                <span className="font-medium">Timings:</span> {med.timings.join(", ")}
+                              <div className="col-span-full md:col-span-2">
+                                <input
+                                  type="text"
+                                  value={med.dosage || ""}
+                                  onChange={(e) => {
+                                    const updated = [...editedMedications];
+                                    updated[idx] = { ...updated[idx], dosage: e.target.value };
+                                    setEditedMedications(updated);
+                                  }}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
                               </div>
-                            )}
-                          </div>
+                              <div className="col-span-full md:col-span-2">
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={med.frequency_per_day ?? ""}
+                                    onChange={(e) => {
+                                      const updated = [...editedMedications];
+                                      const val = e.target.value === "" ? undefined : parseInt(e.target.value);
+                                      updated[idx] = { ...updated[idx], frequency_per_day: val };
+                                      setEditedMedications(updated);
+                                    }}
+                                    className="w-16 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+                                  />
+                                  <span className="text-gray-500 text-xs">× daily</span>
+                                </div>
+                              </div>
+                              <div className="col-span-full md:col-span-2">
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={med.duration_days ?? ""}
+                                    onChange={(e) => {
+                                      const updated = [...editedMedications];
+                                      const val = e.target.value === "" ? undefined : parseInt(e.target.value);
+                                      updated[idx] = { ...updated[idx], duration_days: val };
+                                      setEditedMedications(updated);
+                                    }}
+                                    className="w-16 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+                                  />
+                                  <span className="text-gray-500 text-xs">days</span>
+                                </div>
+                              </div>
+                              <div className="col-span-full md:col-span-3">
+                                <input
+                                  type="text"
+                                  value={med.meal_instruction || ""}
+                                  onChange={(e) => {
+                                    const updated = [...editedMedications];
+                                    updated[idx] = { ...updated[idx], meal_instruction: e.target.value };
+                                    setEditedMedications(updated);
+                                  }}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="e.g., after food"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="col-span-full md:col-span-3 font-semibold text-gray-800">
+                                {med.medicine}
+                              </div>
+                              <div className="col-span-full md:col-span-2 text-gray-600">
+                                {med.dosage || "—"}
+                              </div>
+                              <div className="col-span-full md:col-span-2 text-gray-600">
+                                {freqDisplay ? `${freqDisplay}× daily` : "—"}
+                              </div>
+                              <div className="col-span-full md:col-span-2 text-gray-600">
+                                {durDisplay ? `${durDisplay} days` : "—"}
+                              </div>
+                              <div className="col-span-full md:col-span-3 text-gray-600">
+                                {instructionDisplay || "—"}
+                              </div>
+                            </>
+                          )}
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
-                </div>
-              )}
-
-              {selectedPrescription.summary && (
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-                  <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
-                  <p className="text-sm text-blue-700 whitespace-pre-wrap">
-                    {selectedPrescription.summary}
-                  </p>
                 </div>
               )}
 

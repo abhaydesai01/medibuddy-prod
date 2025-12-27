@@ -5,12 +5,15 @@ import toast, { Toaster } from "react-hot-toast";
 import { setDoctorCredentials } from "../../store/slices/doctorAuthSlice";
 import { doctorAuthAPI } from "../../services/api";
 import { Stethoscope } from "lucide-react";
+import TermsAndConditionsModal from "../../components/TermsAndConditionsModal";
 
 const DoctorLogin: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [pendingLoginData, setPendingLoginData] = useState<{ doctor: any; token: string; phone: string } | null>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -75,22 +78,36 @@ const DoctorLogin: React.FC = () => {
       let formattedPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
       const response = await doctorAuthAPI.verifyOtp({ phone : formattedPhone, otp });
       console.log(response.data.doctor);
-      // Save to localStorage
-      localStorage.setItem("doctorToken", response.data.token);
-      localStorage.setItem("doctorInfo", JSON.stringify(response.data.doctor));
-      localStorage.setItem("doctorPhone", formattedPhone);
+      
+      toast.success("OTP Verified!", { id: loadingToastId });
+      
+      const loginData = {
+        doctor: response.data.doctor,
+        token: response.data.token,
+        phone: formattedPhone,
+      };
+      
+      // Check if doctor has already accepted T&C
+      if (response.data.doctor.hasAcceptedTnC) {
+        // Doctor already accepted, proceed directly
+        localStorage.setItem("doctorToken", loginData.token);
+        localStorage.setItem("doctorInfo", JSON.stringify(loginData.doctor));
+        localStorage.setItem("doctorPhone", loginData.phone);
 
-      // Dispatch to Redux store
-      dispatch(
-        setDoctorCredentials({
-          doctor: response.data.doctor,
-          token: response.data.token,
-        })
-      );
+        dispatch(
+          setDoctorCredentials({
+            doctor: loginData.doctor,
+            token: loginData.token,
+          })
+        );
 
-      toast.success("Login successful!", { id: loadingToastId });
-
-      navigate(from, { replace: true });
+        toast.success("Login successful!");
+        navigate(from, { replace: true });
+      } else {
+        // Show T&C modal for first-time acceptance
+        setPendingLoginData(loginData);
+        setShowTermsModal(true);
+      }
 
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Invalid OTP.", {
@@ -101,9 +118,69 @@ const DoctorLogin: React.FC = () => {
     }
   };
 
+  // Handle T&C acceptance
+  const handleTermsAccept = async () => {
+    if (pendingLoginData) {
+      try {
+        // Update T&C acceptance in backend
+        await doctorAuthAPI.acceptTnC(pendingLoginData.phone);
+        
+        // Save to localStorage
+        localStorage.setItem("doctorToken", pendingLoginData.token);
+        localStorage.setItem("doctorInfo", JSON.stringify(pendingLoginData.doctor));
+        localStorage.setItem("doctorPhone", pendingLoginData.phone);
+
+        // Dispatch to Redux store
+        dispatch(
+          setDoctorCredentials({
+            doctor: pendingLoginData.doctor,
+            token: pendingLoginData.token,
+          })
+        );
+
+        toast.success("Login successful!");
+        setShowTermsModal(false);
+        navigate(from, { replace: true });
+      } catch (error) {
+        console.error("Failed to save T&C acceptance:", error);
+        // Still allow login even if T&C save fails
+        localStorage.setItem("doctorToken", pendingLoginData.token);
+        localStorage.setItem("doctorInfo", JSON.stringify(pendingLoginData.doctor));
+        localStorage.setItem("doctorPhone", pendingLoginData.phone);
+
+        dispatch(
+          setDoctorCredentials({
+            doctor: pendingLoginData.doctor,
+            token: pendingLoginData.token,
+          })
+        );
+
+        toast.success("Login successful!");
+        setShowTermsModal(false);
+        navigate(from, { replace: true });
+      }
+    }
+  };
+
+  // Handle T&C decline
+  const handleTermsDecline = () => {
+    setShowTermsModal(false);
+    setPendingLoginData(null);
+    toast.error("You must accept the Terms & Conditions to continue.");
+    setOtpSent(false);
+    setOtp("");
+  };
+
 return (
   <div className="h-screen bg-white overflow-hidden lg:grid lg:grid-cols-2">
     <Toaster position="top-right" />
+
+    {/* Terms & Conditions Modal */}
+    <TermsAndConditionsModal
+      isOpen={showTermsModal}
+      onAccept={handleTermsAccept}
+      onDecline={handleTermsDecline}
+    />
 
     {/* LEFT PANEL — Beautiful gradient like sample UI */}
     <div className="relative hidden w-full h-full flex-col justify-between bg-gradient-to-br from-slate-900 to-teal-900 p-8 text-white lg:flex">
