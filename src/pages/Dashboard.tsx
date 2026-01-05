@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
-import { Stethoscope, ArrowRight } from "lucide-react";
 import { healthLogsAPI } from "../services/api";
 import {
   ResponsiveContainer,
@@ -40,69 +39,68 @@ const Dashboard: React.FC = () => {
         setLogs(res.data);
 
         /** ------------------------
-         *  CALORIES TREND
+         *  CALORIES TREND (from vitalLogs only, summed by day)
          -------------------------*/
-        const calorieEntries: any[] = [];
-
-        res.data.mealLogs.forEach((log: any) => {
-          calorieEntries.push({
-            date: log.date,
-            calories: log.total_calories,
-          });
-        });
+        const caloriesByDate: Record<string, { calories: number; rawDate: Date }> = {};
 
         res.data.vitalLogs.forEach((log: any) => {
-          if (log.calories_consumed) {
-            calorieEntries.push({
-              date: log.date,
-              calories: log.calories_consumed,
-            });
+          if (log.type === "food" && log.calories_consumed) {
+            const rawDate = new Date(log.date);
+            const dateKey = rawDate.toISOString().split('T')[0]; // YYYY-MM-DD for grouping
+            
+            if (!caloriesByDate[dateKey]) {
+              caloriesByDate[dateKey] = { calories: 0, rawDate };
+            }
+            caloriesByDate[dateKey].calories += log.calories_consumed;
           }
         });
 
-        calorieEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        // Convert to array, sort by actual date, then format for display
+        const calorieEntries = Object.entries(caloriesByDate)
+          .sort((a, b) => a[1].rawDate.getTime() - b[1].rawDate.getTime())
+          .map(([_, data]) => ({
+            date: data.rawDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            calories: data.calories
+          }));
+
         setCaloriesData(calorieEntries);
 
 
         /** ------------------------
-         *  BP TREND
+         *  BP TREND (from vitalLogs)
          -------------------------*/
-        const bpEntries: any[] = [];
+        const bpEntries = res.data.vitalLogs
+          .filter((log: any) => log.type === "bp" && log.systolic && log.diastolic)
+          .map((log: any) => ({
+            rawDate: new Date(log.date),
+            systolic: log.systolic,
+            diastolic: log.diastolic,
+          }))
+          .sort((a: any, b: any) => a.rawDate.getTime() - b.rawDate.getTime())
+          .map((entry: any) => ({
+            date: entry.rawDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            systolic: entry.systolic,
+            diastolic: entry.diastolic,
+          }));
 
-        res.data.vitalLogs.forEach((log: any) => {
-          if (log.type === "bp" && log.systolic && log.diastolic) {
-            bpEntries.push({
-              date: log.date,
-              systolic: log.systolic,
-              diastolic: log.diastolic,
-            });
-          }
-        });
-
-        bpEntries.sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
         setBpData(bpEntries);
 
 
-
         /** ------------------------
-         *  WEIGHT TREND
+         *  WEIGHT TREND (from vitalLogs)
          -------------------------*/
-        const weightEntries: any[] = [];
+        const weightEntries = res.data.vitalLogs
+          .filter((log: any) => log.type === "weight" && log.value)
+          .map((log: any) => ({
+            rawDate: new Date(log.date),
+            weight: parseFloat(log.value),
+          }))
+          .sort((a: any, b: any) => a.rawDate.getTime() - b.rawDate.getTime())
+          .map((entry: any) => ({
+            date: entry.rawDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            weight: entry.weight,
+          }));
 
-        res.data.vitalLogs.forEach((log: any) => {
-          if (log.type === "weight" && log.value) {
-            weightEntries.push({
-              date: log.date,
-              weight: parseFloat(log.value),
-            });
-          }
-        });
-
-        weightEntries.sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
         setWeightData(weightEntries);
 
 

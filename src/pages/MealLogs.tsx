@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
 import { healthLogsAPI, aiAPI } from "../services/api";
-import { TrendingUp, Sparkles, CheckCircle, AlertCircle, Lightbulb, Loader2 } from "lucide-react";
+import { TrendingUp, Sparkles, CheckCircle, AlertCircle, Loader2, Calendar } from "lucide-react";
 
 interface FoodLog {
     _id: string;
@@ -63,6 +63,47 @@ const MealLogs: React.FC = () => {
     const [stats, setStats] = useState<MealStats | null>(null);
 
     const patientPhone = localStorage.getItem("patientPhone") ?? "";
+
+    // Group logs by date
+    const groupedLogs = useMemo(() => {
+        const groups: Record<string, FoodLog[]> = {};
+        
+        foodLogs.forEach(log => {
+            const dateKey = new Date(log.date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            
+            if (!groups[dateKey]) {
+                groups[dateKey] = [];
+            }
+            groups[dateKey].push(log);
+        });
+
+        // Sort dates in descending order (most recent first)
+        const sortedKeys = Object.keys(groups).sort((a, b) => 
+            new Date(b).getTime() - new Date(a).getTime()
+        );
+
+        return sortedKeys.map(date => ({
+            date,
+            logs: groups[date].sort((a, b) => 
+                new Date(`${b.date} ${b.time}`).getTime() - new Date(`${a.date} ${a.time}`).getTime()
+            )
+        }));
+    }, [foodLogs]);
+
+    // Calculate daily totals for a group
+    const getDailyTotals = (logs: FoodLog[]) => {
+        return logs.reduce((acc, log) => ({
+            calories: acc.calories + (log.calories_consumed || 0),
+            carbs: acc.carbs + (log.carbs_g || 0),
+            protein: acc.protein + (log.protein_g || 0),
+            fats: acc.fats + (log.fats_g || 0),
+        }), { calories: 0, carbs: 0, protein: 0, fats: 0 });
+    };
 
     useEffect(() => {
         const fetchLogs = async () => {
@@ -210,7 +251,7 @@ const MealLogs: React.FC = () => {
                             </div>
 
                             {/* Recommendations */}
-                            <div className="bg-gradient-to-r from-teal-500 to-blue-500 rounded-xl p-5 shadow-sm text-white">
+                            {/* <div className="bg-gradient-to-r from-teal-500 to-blue-500 rounded-xl p-5 shadow-sm text-white">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Lightbulb className="h-5 w-5" />
                                     <h3 className="font-semibold">Top Recommendations</h3>
@@ -223,7 +264,7 @@ const MealLogs: React.FC = () => {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </div> */}
                         </div>
                     ) : (
                         <div className="text-center py-8">
@@ -260,94 +301,127 @@ const MealLogs: React.FC = () => {
                             <p className="text-gray-400 text-sm mt-2">Start logging your meals to see them here!</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {foodLogs.map((log) => (
-                                <div
-                                    key={log._id}
-                                    className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 transition-all duration-100 ease-out hover:shadow-lg hover:scale-[1.02]"
-                                >
-                                    {/* Header */}
-                                    <div className="mb-3">
-                                        <p className="font-semibold text-gray-800 capitalize">
-                                            {log.meal_type}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            {new Date(log.date).toLocaleDateString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                            })} • {log.time?.slice(0, 8)}
-                                        </p>
-                                    </div>
-
-                                    {/* Description */}
-                                    {log.description && (
-                                        <p className="text-sm text-gray-700 mb-3">
-                                            {log.description}
-                                        </p>
-                                    )}
-
-                                    {/* Nutrition Summary */}
-                                    <div className="grid grid-cols-2 gap-2 text-sm mb-3">
-                                        <div className="bg-orange-50 rounded-lg p-2">
-                                            <p className="text-xs text-gray-600">Calories</p>
-                                            <p className="font-bold text-orange-600">{log.calories_consumed}</p>
-                                        </div>
-                                        <div className="bg-green-50 rounded-lg p-2">
-                                            <p className="text-xs text-gray-600">Health Score</p>
-                                            <p className="font-bold text-green-600">{log.health_score}/10</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Macros */}
-                                    <div className="grid grid-cols-3 gap-2 text-xs text-gray-700 mb-3">
-                                        <div className="text-center">
-                                            <p className="text-gray-500">Carbs</p>
-                                            <p className="font-semibold">{log.carbs_g}g</p>
-                                        </div>
-                                        <div className="text-center">
-                                            <p className="text-gray-500">Protein</p>
-                                            <p className="font-semibold">{log.protein_g}g</p>
-                                        </div>
-                                        <div className="text-center">
-                                            <p className="text-gray-500">Fats</p>
-                                            <p className="font-semibold">{log.fats_g}g</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Items */}
-                                    {log.items?.length > 0 && (
-                                        <div className="mb-3">
-                                            <p className="text-xs font-semibold text-gray-700 mb-1">Items:</p>
-                                            <div className="flex flex-wrap gap-1">
-                                                {log.items.map((item, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full"
-                                                    >
-                                                        {item}
-                                                    </span>
-                                                ))}
+                        <div className="space-y-8">
+                            {groupedLogs.map(({ date, logs }) => {
+                                const dailyTotals = getDailyTotals(logs);
+                                return (
+                                    <div key={date} className="space-y-4">
+                                        {/* Date Header */}
+                                        <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-4 border border-blue-100">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2 bg-blue-600 rounded-lg">
+                                                    <Calendar className="h-5 w-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-bold text-gray-800">{date}</h3>
+                                                    <p className="text-xs text-gray-500">{logs.length} meal{logs.length > 1 ? 's' : ''} logged</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-4 text-sm">
+                                                <div className="text-center">
+                                                    <p className="text-xs text-gray-500">Calories</p>
+                                                    <p className="font-bold text-orange-600">{dailyTotals.calories}</p>
+                                                </div>
+                                                <div className="text-center hidden sm:block">
+                                                    <p className="text-xs text-gray-500">Protein</p>
+                                                    <p className="font-bold text-green-600">{dailyTotals.protein}g</p>
+                                                </div>
+                                                <div className="text-center hidden sm:block">
+                                                    <p className="text-xs text-gray-500">Carbs</p>
+                                                    <p className="font-bold text-blue-600">{dailyTotals.carbs}g</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    )}
 
-                                    {/* AI Analysis */}
-                                    {log.analysis?.brief_assessment && (
-                                        <div className="mt-3 pt-3 border-t border-gray-100">
-                                            <p className="text-xs text-gray-700 mb-2">
-                                                <strong className="text-gray-800">Assessment:</strong>{" "}
-                                                {log.analysis.brief_assessment}
-                                            </p>
-                                            {log.analysis.top_suggestion && (
-                                                <p className="text-xs text-teal-700 bg-teal-50 p-2 rounded">
-                                                    💡 {log.analysis.top_suggestion}
-                                                </p>
-                                            )}
+                                        {/* Meals for this date */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-2">
+                                            {logs.map((log) => (
+                                                <div
+                                                    key={log._id}
+                                                    className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 transition-all duration-100 ease-out hover:shadow-lg hover:scale-[1.02]"
+                                                >
+                                                    {/* Header */}
+                                                    <div className="mb-3">
+                                                        <p className="font-semibold text-gray-800 capitalize">
+                                                            {log.meal_type}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {log.time?.slice(0, 5)}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Description */}
+                                                    {log.description && (
+                                                        <p className="text-sm text-gray-700 mb-3">
+                                                            {log.description}
+                                                        </p>
+                                                    )}
+
+                                                    {/* Nutrition Summary */}
+                                                    <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                                                        <div className="bg-orange-50 rounded-lg p-2">
+                                                            <p className="text-xs text-gray-600">Calories</p>
+                                                            <p className="font-bold text-orange-600">{log.calories_consumed}</p>
+                                                        </div>
+                                                        <div className="bg-green-50 rounded-lg p-2">
+                                                            <p className="text-xs text-gray-600">Health Score</p>
+                                                            <p className="font-bold text-green-600">{log.health_score}/10</p>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Macros */}
+                                                    <div className="grid grid-cols-3 gap-2 text-xs text-gray-700 mb-3">
+                                                        <div className="text-center">
+                                                            <p className="text-gray-500">Carbs</p>
+                                                            <p className="font-semibold">{log.carbs_g}g</p>
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <p className="text-gray-500">Protein</p>
+                                                            <p className="font-semibold">{log.protein_g}g</p>
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <p className="text-gray-500">Fats</p>
+                                                            <p className="font-semibold">{log.fats_g}g</p>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Items */}
+                                                    {log.items?.length > 0 && (
+                                                        <div className="mb-3">
+                                                            <p className="text-xs font-semibold text-gray-700 mb-1">Items:</p>
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {log.items.map((item, idx) => (
+                                                                    <span
+                                                                        key={idx}
+                                                                        className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full"
+                                                                    >
+                                                                        {item}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* AI Analysis */}
+                                                    {log.analysis?.brief_assessment && (
+                                                        <div className="mt-3 pt-3 border-t border-gray-100">
+                                                            <p className="text-xs text-gray-700 mb-2">
+                                                                <strong className="text-gray-800">Assessment:</strong>{" "}
+                                                                {log.analysis.brief_assessment}
+                                                            </p>
+                                                            {log.analysis.top_suggestion && (
+                                                                <p className="text-xs text-teal-700 bg-teal-50 p-2 rounded">
+                                                                    💡 {log.analysis.top_suggestion}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
                                         </div>
-                                    )}
-                                </div>
-                            ))}
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

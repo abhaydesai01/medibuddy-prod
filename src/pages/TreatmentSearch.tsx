@@ -75,7 +75,36 @@ const TreatmentSearch: React.FC = () => {
         const filteredDoctors = mappedDoctors.filter(
           (doc: MappedDoctor) => doc.doctor_phone !== "+919620417711"
         );
-        setDoctors(filteredDoctors.map((doc: MappedDoctor) => ({ ...doc, loading: false })));
+        
+        // Initialize doctors with loading state
+        const initialDoctors = filteredDoctors.map((doc: MappedDoctor) => ({ 
+          ...doc, 
+          loading: true 
+        }));
+        setDoctors(initialDoctors);
+        
+        // Fetch details for all doctors in parallel
+        const doctorDetailsPromises = filteredDoctors.map(async (doc: MappedDoctor, index: number) => {
+          try {
+            const detailsResponse = await doctorsAPI.getByPhone(doc.doctor_phone);
+            return { 
+              ...doc, 
+              details: detailsResponse.data.doctor, 
+              loading: false,
+              error: undefined 
+            };
+          } catch (err) {
+            console.error(`Error fetching details for doctor ${doc.doctor_phone}:`, err);
+            return { 
+              ...doc, 
+              loading: false, 
+              error: "Failed to load details" 
+            };
+          }
+        });
+        
+        const doctorsWithDetails = await Promise.all(doctorDetailsPromises);
+        setDoctors(doctorsWithDetails);
         
         setError(null);
       } catch (err: any) {
@@ -112,14 +141,8 @@ const TreatmentSearch: React.FC = () => {
   };
 
   const handleDoctorClick = async (doctor: DoctorWithDetails, index: number) => {
-    // If details not loaded, fetch them
-    if (!doctor.details && !doctor.loading) {
-      await fetchDoctorDetails(doctor.doctor_phone, index);
-    }
-    
-    // Find the updated doctor with details
-    const updatedDoctor = doctors[index];
-    setSelectedDoctor(updatedDoctor);
+    // Details should already be loaded, just show the modal
+    setSelectedDoctor(doctor);
     setShowAvailability(true);
   };
 

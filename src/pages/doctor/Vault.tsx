@@ -1029,14 +1029,31 @@ const Vault: React.FC = () => {
                     <div className="divide-y divide-gray-200">
                       {(isEditing ? editedMedications : selectedPrescription.medications.filter((med) => {
                           // Only filter in view mode - hide rows with 0 frequency or duration
-                          const freqNum = med.frequency_per_day || 1;
-                          const durNum = med.duration_days || 1;
+                          // Check both string and numeric fields
+                          const freqNum = med.frequency_per_day || (med.frequency ? parseInt(med.frequency.match(/(\d+)/)?.[1] || "1") : 1);
+                          const durNum = med.duration_days || (med.duration ? parseInt(med.duration.match(/(\d+)/)?.[1] || "1") : 1);
                           return freqNum > 0 && durNum > 0;
                         }))
                         .map((med, idx) => {
-                        // Get display values - prioritize numeric fields
-                        const freqDisplay = med.frequency_per_day?.toString() || "";
-                        const durDisplay = med.duration_days?.toString() || "";
+                        // Get display values - check both string and numeric fields
+                        const getFrequencyDisplay = () => {
+                          if (med.frequency_per_day) return med.frequency_per_day.toString();
+                          if (med.frequency) {
+                            const match = med.frequency.match(/(\d+)/);
+                            return match ? match[1] : med.frequency;
+                          }
+                          return "";
+                        };
+                        const getDurationDisplay = () => {
+                          if (med.duration_days) return med.duration_days.toString();
+                          if (med.duration) {
+                            const match = med.duration.match(/(\d+)/);
+                            return match ? match[1] : med.duration;
+                          }
+                          return "";
+                        };
+                        const freqDisplay = getFrequencyDisplay();
+                        const durDisplay = getDurationDisplay();
                         const instructionDisplay = med.meal_instruction || med.food_relation || med.instructions || "";
                         
                         return (
@@ -1145,7 +1162,7 @@ const Vault: React.FC = () => {
                 </div>
               )}
 
-              {selectedPrescription.files && selectedPrescription.files.length > 0 && (
+              {/* {selectedPrescription.files && selectedPrescription.files.length > 0 && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-gray-800 mb-3">Attached Files</h4>
                   <div className="flex flex-wrap gap-2">
@@ -1163,7 +1180,7 @@ const Vault: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </>
